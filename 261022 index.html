@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Icespot – Ice cream, shakes & cakes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EEF5E4;--ink:#2A1712;--muted:#6B5A52;--pink:#D6336C;--pink-d:#B0235A;--card:#fff;--line:#D9E4C9;--choc:#3B211A;
+--head:'Bricolage Grotesque',system-ui,sans-serif;--body:'DM Sans',system-ui,sans-serif}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth;scroll-padding-top:70px}
+body{font-family:var(--body);background:var(--bg);color:var(--ink);line-height:1.5;padding-bottom:90px}
+header{padding:calc(env(safe-area-inset-top,0px) + 40px) 20px 28px;max-width:720px;margin:auto}
+h1{font-family:var(--head);font-weight:800;font-size:clamp(2.6rem,11vw,4.4rem);line-height:.95;letter-spacing:-.03em}
+header p{margin-top:14px;color:var(--muted);max-width:44ch}
+.info{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;font-size:.9rem}
+.info span{background:#fff;border:1px solid var(--line);border-radius:99px;padding:4px 12px}
+nav{position:sticky;top:0;z-index:5;background:var(--bg);padding:calc(env(safe-area-inset-top,0px) + 8px) 20px 8px;border-bottom:1px solid var(--line)}
+nav div{max-width:720px;margin:auto;display:flex;gap:8px;overflow-x:auto}
+nav a{white-space:nowrap;text-decoration:none;color:var(--ink);font-weight:700;font-size:.92rem;padding:7px 14px;border-radius:99px;background:#fff;border:1px solid var(--line)}
+nav a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--pink);outline-offset:2px}
+main{max-width:720px;margin:auto;padding:0 20px}
+section{padding-top:34px}
+h2{font-family:var(--head);font-weight:800;font-size:1.8rem;letter-spacing:-.02em}
+.sub{color:var(--muted);font-size:.92rem;margin-bottom:14px}
+.item{display:flex;gap:14px;align-items:center;background:var(--card);border-radius:18px;padding:12px;margin-top:10px}
+.pic{flex:none;width:52px;height:52px;border-radius:14px;display:grid;place-items:center;font-size:2rem;background:var(--sw,#f3e6ea);overflow:hidden}
+.pic img{width:100%;height:100%;object-fit:cover}
+.txt{flex:1;min-width:0}
+.txt b{display:block;font-size:1.02rem}
+.txt small{color:var(--muted);display:block;line-height:1.35}
+.buy{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+.buy select{font:inherit;font-size:.85rem;padding:4px 6px;border-radius:8px;border:1px solid var(--line);background:#fff}
+.price,.line span:last-child,#sum{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;font-variant-numeric:lining-nums tabular-nums;font-weight:700}
+.add{font:inherit;font-weight:700;background:var(--pink);color:#fff;border:0;border-radius:99px;padding:7px 16px;cursor:pointer;transition:transform .12s,background .12s}
+.add:hover{background:var(--pink-d)}.add:active{transform:scale(.94)}
+.qty{display:flex;align-items:center;gap:10px;background:var(--choc);color:#fff;border-radius:99px;padding:2px}
+.qty button{width:32px;height:32px;border:0;border-radius:50%;background:transparent;color:#fff;font-size:1.2rem;cursor:pointer}
+.bar{position:fixed;left:0;right:0;bottom:0;padding:12px 20px calc(env(safe-area-inset-bottom,0px) + 12px);background:var(--choc);color:#fff;display:none;justify-content:center;z-index:6}
+.bar.on{display:flex}
+.bar button{width:100%;max-width:680px;display:flex;justify-content:space-between;font:inherit;font-weight:700;font-size:1rem;background:var(--pink);color:#fff;border:0;border-radius:14px;padding:14px 18px;cursor:pointer}
+dialog{border:0;border-radius:22px;padding:22px;width:min(520px,calc(100% - 24px));max-height:90vh;color:var(--ink);background:#fff}
+dialog::backdrop{background:rgba(42,23,18,.55)}
+dialog h3{font-family:var(--head);font-size:1.5rem;margin-bottom:10px}
+.line{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px solid var(--line);font-size:.95rem}
+.total{font-weight:800;font-size:1.1rem;padding-top:10px}
+label{display:block;margin-top:12px;font-weight:700;font-size:.9rem}
+input,textarea{width:100%;font:inherit;margin-top:4px;padding:10px 12px;border:1px solid #cfd8c0;border-radius:12px}
+.note{font-size:.85rem;color:var(--muted);margin-top:6px}
+.err{color:#b00020;font-size:.9rem;margin-top:8px;min-height:1.2em}
+.go{margin-top:14px;width:100%;font:inherit;font-weight:700;font-size:1rem;background:#1FA855;color:#fff;border:0;border-radius:14px;padding:14px;cursor:pointer}
+.close{float:right;background:none;border:0;font-size:1.6rem;cursor:pointer;color:var(--muted)}
+.subs{display:flex;gap:8px;overflow-x:auto;margin:4px 0 12px}.subs button{font:inherit;font-weight:700;font-size:.9rem;white-space:nowrap;padding:7px 16px;border-radius:99px;border:1px solid var(--line);background:#fff;color:var(--ink);cursor:pointer}.subs button[aria-pressed=true]{background:var(--choc);color:#fff;border-color:var(--choc)}[hidden]{display:none!important}
+.item.off{opacity:.55}.add[disabled]{background:#8a8a8a;cursor:default}
+footer{max-width:720px;margin:40px auto 0;padding:0 20px;color:var(--muted);font-size:.9rem}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<header>
+  <h1 id="shop"></h1>
+  <p>Ice cream, shakes and fresh cakes. Pick what you want, add it to your order and send it in one tap.</p>
+  <div class="info"><span id="hours"></span><span id="place"></span></div>
+</header>
+<nav><div id="tabs"></div></nav>
+<main id="menu"><p class="sub" style="padding-top:30px">Loading menu…</p></main>
+<footer>Cake preorders need at least <span id="lead"></span> day(s) notice. </footer>
+
+<div class="bar" id="bar"><button id="open"><span id="cnt"></span><span id="sum"></span></button></div>
+
+<dialog id="dlg">
+  <button class="close" id="x" aria-label="Close">×</button>
+  <h3>Your order</h3>
+  <div id="lines"></div>
+  <div class="line total"><span>Total</span><span id="tot"></span></div>
+  <label>Your name<input id="nm" autocomplete="name"></label>
+  <label>Phone number<input id="ph" type="tel" autocomplete="tel"></label>
+  <label id="dl">Pickup / delivery date<input id="dt" type="date"></label>
+  <label>Message on cake or notes<textarea id="nt" rows="2" placeholder="e.g. Happy Birthday Anu, less sugar"></textarea></label>
+  <p class="note">Tap the button below to send this order to us on WhatsApp. We will confirm the price and time.</p>
+  <div class="err" id="err" role="alert"></div>
+  <button class="go" id="send">Send order on WhatsApp</button>
+</dialog>
+
+<script>
+/* ============ CONFIG: edit this part ============ */
+const CONFIG={
+  shop:"Icespot",
+  whatsapp:"919497657704",          // country code + number, no + or spaces
+  hours:"Open 11 am – 11 pm",
+  place:"Pulinkunnoo",
+  cakeLeadDays:1,                   // minimum notice for cakes
+  currency:"\u20B9",
+  sheetCsvUrl:"https://docs.google.com/spreadsheets/d/e/2PACX-1vQ_u070DFZRS-jW4MfCMxCl_MM6ApENWJ2wT7Cn8dnBUEJVQGlzOBykou6lJyA-VahtkOPJgkjhPy02/pub?gid=947170811&single=true&output=csv",                   // paste your Google Sheet "published CSV" link here
+  sizeLabels:["Half kg","1 kg"]     // names for Price and Price2 columns of cakes
+};
+/* ================================================ */
+// Built-in copy of the menu, used until sheetCsvUrl is set (or if the sheet cannot load).
+const DEFAULT_CSV="Section,Group,Item,Price,Price2,Photo,Available\nIce cream,Milk candy,Avocado,20,,,yes\nIce cream,Milk candy,Chikku,20,,,yes\nIce cream,Milk candy,Oreo,20,,,yes\nIce cream,Milk candy,White guava,20,,,yes\nIce cream,Milk candy,Jack fruit,20,,,yes\nIce cream,Milk candy,Strawberry,20,,,yes\nIce cream,Milk candy,Pina chikka,20,,,yes\nIce cream,Milk candy,Naruneendi,20,,,yes\nIce cream,Milk candy,Cherry,20,,,yes\nIce cream,Milk candy,Malai kulfi,25,,,yes\nIce cream,Milk candy,Fig,25,,,yes\nIce cream,Milk candy,English delight,25,,,yes\nIce cream,Milk candy,Tender coconut,25,,,yes\nIce cream,Milk candy,Semiya paayasam,25,,,yes\nIce cream,Milk candy,Custard apple,25,,,yes\nIce cream,Milk candy,Chocolate,25,,,yes\nIce cream,Milk candy,Gulab,30,,,yes\nIce cream,Milk candy,Palada,30,,,yes\nIce cream,Milk candy,Cold coffee,30,,,yes\nIce cream,Milk candy,Passion fruit,35,,,yes\nIce cream,Milk candy,Snickers,35,,,yes\nIce cream,Milk candy,Rasamalai,35,,,yes\nIce cream,Milk candy,KitKat,35,,,yes\nIce cream,Milk candy,Lotus Biscoff,40,,,yes\nIce cream,Milk candy,Blueberry,40,,,yes\nIce cream,Milk candy,Alphonso mango,40,,,yes\nIce cream,Milk candy,Boost malai,40,,,yes\nIce cream,Milk candy,Pistachio,45,,,yes\nIce cream,Milk candy,Alphonso passion,50,,,yes\nIce cream,Milk candy,Red velvet,50,,,yes\nIce cream,Milk candy,Coco pine bliss,60,,,yes\nIce cream,Milk candy,Kulfi,60,,,yes\nIce cream,Water candy,Mango,10,,,yes\nIce cream,Water candy,Watermelon,10,,,yes\nIce cream,Water candy,Mosambi,10,,,yes\nIce cream,Water candy,Orange,10,,,yes\nIce cream,Water candy,Pineapple,10,,,yes\nIce cream,Water candy,Mojito,15,,,yes\nIce cream,Water candy,Pink guava,15,,,yes\nIce cream,Water candy,Green apple,15,,,yes\nIce cream,Water candy,Mixed fruit,20,,,yes\nIce cream,Water candy,Kiwi,30,,,yes\nIce cream,Water candy,Ginger lime,30,,,yes\nShakes,Lime,Lime,25,,,yes\nShakes,Lime,Soda lime,25,,,yes\nShakes,Mojitos,Passionfruit mojito,40,,,yes\nShakes,Mojitos,Green apple mojito,40,,,yes\nShakes,Mojitos,Grape mojito,40,,,yes\nShakes,Shakes and coolers,Cold Boost,40,,,yes\nShakes,Shakes and coolers,Cold Horlicks,40,,,yes\nShakes,Shakes and coolers,Pista milk,50,,,yes\nShakes,Shakes and coolers,Rose milk,50,,,yes\nShakes,Shakes and coolers,Cold coffee,50,,,yes\nShakes,Shakes and coolers,Oreo shake,50,,,yes\nShakes,Shakes and coolers,Chocolate shake,50,,,yes\nShakes,Shakes and coolers,Strawberry shake,60,,,yes\nShakes,Shakes and coolers,Black currant shake,70,,,yes\nShakes,Shakes and coolers,Blueberry shake,70,,,yes\nShakes,Shakes and coolers,Butterscotch shake,70,,,yes\nShakes,Shakes and coolers,Fig and honey shake,80,,,yes\nShakes,Shakes and coolers,Snickers shake,80,,,yes\nShakes,Shakes and coolers,KitKat shake,80,,,yes\nShakes,Shakes and coolers,Dates shake,90,,,yes\nCakes,Classic,Vanilla,380,630,,yes\nCakes,Classic,Vanilla chocolate,430,780,,yes\nCakes,Classic,White forest,380,650,,yes\nCakes,Classic,Black forest,380,650,,yes\nCakes,Classic,Red velvet,380,700,,yes\nCakes,Classic,Red velvet cream cheese,500,850,,yes\nCakes,Classic,Pineapple,430,760,,yes\nCakes,Classic,Pista,430,780,,yes\nCakes,Classic,Strawberry,430,780,,yes\nCakes,Classic,Mango,430,750,,yes\nCakes,Classic,Butterscotch,450,780,,yes\nCakes,Classic,Chocolate Nutella,600,950,,yes\nCakes,Classic,Chocolate almond,500,850,,yes\nCakes,Classic,Chocolate,430,780,,yes\nCakes,Classic,Chocolate truffle,550,950,,yes\nCakes,Classic,Choco chip chocolate,550,950,,yes\nCakes,Classic,Vancho,480,800,,yes\nCakes,Premium,Caramel,430,780,,yes\nCakes,Premium,Nutty Bubble,500,900,,yes\nCakes,Premium,Spanish Delight,500,900,,yes\nCakes,Bento,Black Forest Bento,280,,,yes\nCakes,Bento,White Forest Bento,280,,,yes\nCakes,Bento,Other flavours Bento,300,,,yes\n";
+
+const $=s=>document.querySelector(s), cur=CONFIG.currency;
+let MENU=[];const cart={};
+const fmt=n=>cur+n.toLocaleString("en-IN");
+$("#shop").textContent=CONFIG.shop;$("#hours").textContent=CONFIG.hours;$("#place").textContent=CONFIG.place;
+$("#lead").textContent=CONFIG.cakeLeadDays;document.title=CONFIG.shop+" – Order online";
+
+const LOOK={"milk candy":["🍦","#FFF3C9"],"water candy":["🧊","#D4EEF7"],"lime":["🍋","#F4F8C4"],"mojitos":["🍹","#D8F0D0"],
+ "shakes and coolers":["🥤","#F6D9DF"],"classic":["🎂","#F2DDD2"],"premium":["🍰","#EBD3E6"],"bento":["🧁","#E4D6F2"]};
+const look=g=>LOOK[g.toLowerCase()]||["🍨","#F3E6EA"];
+const num=x=>{const s=String(x??"").replace(/[^\d.]/g,"");return s===""?NaN:parseFloat(s)};
+
+function parseCSV(t){const rows=[];let r=[],f="",q=false;
+  for(let i=0;i<t.length;i++){const c=t[i];
+    if(q){if(c=='"'){if(t[i+1]=='"'){f+='"';i++}else q=false}else f+=c}
+    else if(c=='"')q=true;else if(c==','){r.push(f);f=""}
+    else if(c=='\n'){r.push(f);rows.push(r);r=[];f=""}else if(c!='\r')f+=c}
+  if(f!==""||r.length){r.push(f);rows.push(r)}return rows}
+function photoUrl(u){u=(u||"").trim();if(!u)return"";
+  const m=u.match(/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?(?:export=\w+&)?id=)([\w-]+)/);
+  return m?`https://drive.google.com/thumbnail?id=${m[1]}&sz=w400`:u}
+function toMenu(csv){const rows=parseCSV(csv).filter(r=>r.some(x=>x.trim()));
+  const h=rows.shift().map(x=>x.trim().toLowerCase());
+  const [cs,cg,ci,cp,cq,cph,ca]=["section","group","item","price","price2","photo","available"].map(n=>h.indexOf(n));
+  const menu=[];
+  rows.forEach(r=>{const name=(r[ci]||"").trim(),p1=num(r[cp]);if(!name||isNaN(p1))return;
+    const sn=(r[cs]||"Menu").trim(),gn=(r[cg]||"").trim()||sn;
+    let m=menu.find(x=>x.title===sn);if(!m){m={title:sn,cake:/cake/i.test(sn),groups:[]};menu.push(m)}
+    let g=m.groups.find(x=>x.t===gn);if(!g){g={t:gn,items:[]};m.groups.push(g)}
+    const p2=num(r[cq]);
+    const opts=isNaN(p2)?[["",p1]]:[[CONFIG.sizeLabels[0],p1],[CONFIG.sizeLabels[1],p2]];
+    const av=(r[ca]||"yes").trim().toLowerCase();
+    g.items.push({n:name,opts,img:photoUrl(r[cph]),ok:!["no","n","false","0","sold out","soldout"].includes(av)})});
+  return menu}
+
+const getItem=id=>{const [mi,gi,ii]=id.split("-").map(Number);return {m:MENU[mi],g:MENU[mi].groups[gi],it:MENU[mi].groups[gi].items[ii]}};
+function render(){
+  $("#tabs").innerHTML=MENU.map((m,i)=>`<a href="#s${i}">${m.title}</a>`).join("");
+  $("#menu").innerHTML=MENU.map((m,mi)=>{
+    const subs=m.groups.length>1?`<div class="subs" role="group" aria-label="${m.title} sections">${m.groups.map((g,gi)=>`<button data-sub="${mi}-${gi}" aria-pressed="${gi==0}">${g.t}</button>`).join("")}</div>`:"";
+    const groups=m.groups.map((g,gi)=>{const [e,c]=look(g.t);
+      return `<div data-grp="${mi}-${gi}"${gi?" hidden":""}>`+g.items.map((it,ii)=>{const id=`${mi}-${gi}-${ii}`;
+        const sel=it.opts.length>1?`<select aria-label="Size for ${it.n}" data-sel="${id}">${it.opts.map((o,k)=>`<option value="${k}">${o[0]}</option>`).join("")}</select>`:"";
+        const pic=it.img?`<img src="${it.img}" alt="${it.n}" loading="lazy" onerror="this.replaceWith('${e}')">`:e;
+        return `<div class="item${it.ok?"":" off"}"><div class="pic" style="--sw:${c}">${pic}</div><div class="txt"><b>${it.n}</b></div>
+        <div class="buy">${sel}<span class="price" data-pr="${id}">${fmt(it.opts[0][1])}</span><span data-act="${id}"></span></div></div>`}).join("")+`</div>`}).join("");
+    return `<section id="s${mi}"><h2>${m.title}</h2>${subs}${groups}</section>`}).join("");
+  document.querySelectorAll("[data-sub]").forEach(b=>b.onclick=()=>{
+    const [mi,gi]=b.dataset.sub.split("-");
+    document.querySelectorAll(`[data-sub^="${mi}-"]`).forEach(x=>x.setAttribute("aria-pressed",x===b));
+    document.querySelectorAll(`[data-grp^="${mi}-"]`).forEach(x=>x.hidden=x.dataset.grp!==`${mi}-${gi}`)});
+  document.querySelectorAll("[data-act]").forEach(e=>paintAct(e.dataset.act));
+  document.querySelectorAll("[data-sel]").forEach(s=>s.onchange=()=>{const id=s.dataset.sel;
+    document.querySelector(`[data-pr="${id}"]`).textContent=fmt(ref(id).price);paintAct(id)});
+}
+function ref(id){const {m,g,it}=getItem(id);
+  const sel=document.querySelector(`[data-sel="${id}"]`);const k=sel?+sel.value:0;
+  const name=it.n+(/ice/i.test(m.title)?` (${g.t})`:"");
+  return {key:id+"|"+it.opts[k][0],name,opt:it.opts[k][0],price:it.opts[k][1],cake:m.cake}}
+function paintAct(id){const box=document.querySelector(`[data-act="${id}"]`);
+  if(!getItem(id).it.ok){box.innerHTML=`<button class="add" disabled>Sold out</button>`;return}
+  const r=ref(id),c=cart[r.key];
+  box.innerHTML=c?`<span class="qty"><button aria-label="Remove one">−</button><b>${c.qty}</b><button aria-label="Add one">+</button></span>`:`<button class="add">Add</button>`;
+  const b=box.querySelectorAll("button");
+  if(c){b[0].onclick=()=>change(id,-1);b[1].onclick=()=>change(id,1)}else b[0].onclick=()=>change(id,1)}
+function change(id,d){const r=ref(id);const c=cart[r.key]||(cart[r.key]={...r,qty:0});c.qty+=d;if(c.qty<=0)delete cart[r.key];paintAct(id);update()}
+
+async function load(){let csv=null;
+  if(CONFIG.sheetCsvUrl){
+    try{const r=await fetch(CONFIG.sheetCsvUrl,{cache:"no-cache"});if(!r.ok)throw 0;csv=await r.text();
+      try{localStorage.setItem("menu_csv",csv)}catch(e){}}
+    catch(e){try{csv=localStorage.getItem("menu_csv")}catch(e2){}}}
+  if(!csv)csv=DEFAULT_CSV;
+  MENU=toMenu(csv);render()}
+load();
+
+const list=()=>Object.values(cart), total=()=>list().reduce((s,c)=>s+c.price*c.qty,0);
+function update(){const n=list().reduce((s,c)=>s+c.qty,0);$("#bar").classList.toggle("on",n>0);
+  $("#cnt").textContent=`View order (${n} item${n>1?"s":""})`;$("#sum").textContent=fmt(total());
+  if($("#dlg").open)drawLines()}
+function drawLines(){const L=list();$("#lines").innerHTML=L.map(c=>`<div class="line"><span>${c.qty} × ${c.name}${c.opt?" ("+c.opt+")":""}</span><span>${fmt(c.price*c.qty)}</span></div>`).join("");
+  $("#tot").textContent=fmt(total());const hasCake=L.some(c=>c.cake);$("#dl").style.display=hasCake?"block":"none";
+  if(!L.length)$("#dlg").close()}
+const dt=$("#dt");const mn=new Date();mn.setDate(mn.getDate()+CONFIG.cakeLeadDays);dt.min=mn.toISOString().slice(0,10);
+$("#open").onclick=()=>{drawLines();$("#err").textContent="";$("#dlg").showModal()};
+$("#x").onclick=()=>$("#dlg").close();
+$("#send").onclick=()=>{
+  const nm=$("#nm").value.trim(),ph=$("#ph").value.trim(),L=list(),hasCake=L.some(c=>c.cake);
+  if(!nm||ph.replace(/\D/g,"").length<10){$("#err").textContent="Enter your name and a 10-digit phone number.";return}
+  if(hasCake&&!dt.value){$("#err").textContent="Choose a date for your cake (at least "+CONFIG.cakeLeadDays+" day away).";return}
+  if(hasCake&&dt.value<dt.min){$("#err").textContent="Cakes need at least "+CONFIG.cakeLeadDays+" day(s) notice. Pick a later date.";return}
+  let t=`*New order – ${CONFIG.shop}*\n\n`+L.map(c=>`${c.qty} × ${c.name}${c.opt?" ("+c.opt+")":""} – ${fmt(c.price*c.qty)}`).join("\n")+`\n\n*Total: ${fmt(total())}*\n\nName: ${nm}\nPhone: ${ph}`;
+  if(hasCake)t+=`\nDate: ${dt.value}`;
+  if($("#nt").value.trim())t+=`\nNotes: ${$("#nt").value.trim()}`;
+  window.open(`https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(t)}`,"_blank");
+};
+</script>
+</body>
+</html>
