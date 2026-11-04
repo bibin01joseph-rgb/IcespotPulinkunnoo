@@ -3,67 +3,76 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="icon" href="logo.png">
+<meta name="theme-color" content="#F66DA6">
 <title>Icespot – Ice cream, shakes & cakes</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#EEF5E4;--ink:#2A1712;--muted:#6B5A52;--pink:#D6336C;--pink-d:#B0235A;--card:#fff;--line:#D9E4C9;--choc:#3B211A;
---head:'Bricolage Grotesque',system-ui,sans-serif;--body:'DM Sans',system-ui,sans-serif}
+:root{--bg:#FFFCFA;--ink:#2A2030;--muted:#7B7081;--line:#F0E8EC;--hero:#F66DA6;--pink:#D93A82;--pink-d:#B92C6B;--plum:#822A84;
+--head:'Bricolage Grotesque',system-ui,sans-serif;--body:'DM Sans',system-ui,sans-serif;--num:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
 *{box-sizing:border-box;margin:0}
-html{scroll-behavior:smooth;scroll-padding-top:70px}
-body{font-family:var(--body);background:var(--bg);color:var(--ink);line-height:1.5;padding-bottom:90px}
-header{padding:calc(env(safe-area-inset-top,0px) + 40px) 20px 28px;max-width:720px;margin:auto}
-h1{font-family:var(--head);font-weight:800;font-size:clamp(2.6rem,11vw,4.4rem);line-height:.95;letter-spacing:-.03em}
-header p{margin-top:14px;color:var(--muted);max-width:44ch}
-.info{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;font-size:.9rem}
-.info span{background:#fff;border:1px solid var(--line);border-radius:99px;padding:4px 12px}
-nav{position:sticky;top:0;z-index:5;background:var(--bg);padding:calc(env(safe-area-inset-top,0px) + 8px) 20px 8px;border-bottom:1px solid var(--line)}
-nav div{max-width:720px;margin:auto;display:flex;gap:8px;overflow-x:auto}
-nav a{white-space:nowrap;text-decoration:none;color:var(--ink);font-weight:700;font-size:.92rem;padding:7px 14px;border-radius:99px;background:#fff;border:1px solid var(--line)}
-nav a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--pink);outline-offset:2px}
-main{max-width:720px;margin:auto;padding:0 20px}
-section{padding-top:34px}
-h2{font-family:var(--head);font-weight:800;font-size:1.8rem;letter-spacing:-.02em}
-.sub{color:var(--muted);font-size:.92rem;margin-bottom:14px}
-.item{display:flex;gap:14px;align-items:center;background:var(--card);border-radius:18px;padding:12px;margin-top:10px}
-.pic{flex:none;width:52px;height:52px;border-radius:14px;display:grid;place-items:center;font-size:2rem;background:var(--sw,#f3e6ea);overflow:hidden}
+html{scroll-behavior:smooth;scroll-padding-top:64px}
+body{font-family:var(--body);background:var(--bg);color:var(--ink);line-height:1.5;padding-bottom:96px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.hero{background:var(--hero);text-align:center;padding:calc(env(safe-area-inset-top,0px) + 28px) 20px 26px;border-radius:0 0 32px 32px}
+.logo{display:block;margin:0 auto;width:min(80vw,330px);height:auto}
+.info{display:flex;justify-content:center;flex-wrap:wrap;gap:6px 16px;margin-top:4px;color:#fff;font-size:.88rem;font-weight:500;letter-spacing:.02em}
+.info span+span::before{content:"•";margin-right:16px;opacity:.7}
+nav{position:sticky;top:0;z-index:5;background:rgba(255,252,250,.94);backdrop-filter:blur(8px);padding:calc(env(safe-area-inset-top,0px) + 10px) 20px 10px}
+nav div{max-width:680px;margin:auto;display:flex;justify-content:center;gap:8px;overflow-x:auto}
+nav a{white-space:nowrap;text-decoration:none;color:var(--plum);font-weight:700;font-size:.92rem;padding:7px 18px;border-radius:99px;border:1.5px solid var(--line)}
+nav a:hover{border-color:var(--plum)}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--pink);outline-offset:2px}
+main{max-width:680px;margin:auto;padding:0 22px}
+section{padding-top:36px}
+h2{font-family:var(--head);font-weight:800;font-size:1.7rem;letter-spacing:-.02em;color:var(--plum)}
+.sub{color:var(--muted);font-size:.9rem;margin:2px 0 6px}
+.item{display:flex;gap:14px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}
+.pic{flex:none;width:56px;height:56px;border-radius:16px;display:grid;place-items:center;font-size:1.7rem;background:var(--sw,#f3e6ea);overflow:hidden}
 .pic img{width:100%;height:100%;object-fit:cover}
 .txt{flex:1;min-width:0}
-.txt b{display:block;font-size:1.02rem}
-.txt small{color:var(--muted);display:block;line-height:1.35}
+.txt b{display:block;font-weight:500;font-size:1rem}
 .buy{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
-.buy select{font:inherit;font-size:.85rem;padding:4px 6px;border-radius:8px;border:1px solid var(--line);background:#fff}
-.price,.line span:last-child,#sum{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;font-variant-numeric:lining-nums tabular-nums;font-weight:700}
-.add{font:inherit;font-weight:700;background:var(--pink);color:#fff;border:0;border-radius:99px;padding:7px 16px;cursor:pointer;transition:transform .12s,background .12s}
-.add:hover{background:var(--pink-d)}.add:active{transform:scale(.94)}
-.qty{display:flex;align-items:center;gap:10px;background:var(--choc);color:#fff;border-radius:99px;padding:2px}
-.qty button{width:32px;height:32px;border:0;border-radius:50%;background:transparent;color:#fff;font-size:1.2rem;cursor:pointer}
-.bar{position:fixed;left:0;right:0;bottom:0;padding:12px 20px calc(env(safe-area-inset-bottom,0px) + 12px);background:var(--choc);color:#fff;display:none;justify-content:center;z-index:6}
+.buy select{font:inherit;font-size:.82rem;padding:3px 6px;border-radius:8px;border:1px solid var(--line);background:#fff;color:var(--ink)}
+.price,.line span:last-child,#sum,#tot{font-family:var(--num);font-variant-numeric:lining-nums tabular-nums;font-weight:700}
+.price{color:var(--ink);font-size:.98rem}
+.add{font:inherit;font-weight:700;font-size:.88rem;background:#fff;color:var(--pink);border:1.5px solid var(--pink);border-radius:99px;padding:5px 18px;cursor:pointer;transition:background .15s,color .15s,transform .12s}
+.add:hover{background:var(--pink);color:#fff}.add:active{transform:scale(.95)}
+.add[disabled]{color:#999;border-color:#ccc;background:#fff;cursor:default}
+.item.off{opacity:.55}
+.qty{display:flex;align-items:center;gap:8px;background:var(--plum);color:#fff;border-radius:99px;padding:2px}
+.qty button{width:30px;height:30px;border:0;border-radius:50%;background:transparent;color:#fff;font-size:1.15rem;cursor:pointer}
+.subs{display:flex;gap:8px;overflow-x:auto;margin:12px 0 8px}
+.subs button{font:inherit;font-weight:700;font-size:.88rem;white-space:nowrap;padding:6px 16px;border-radius:99px;border:1.5px solid var(--line);background:#fff;color:var(--ink);cursor:pointer}
+.subs button[aria-pressed=true]{background:var(--plum);color:#fff;border-color:var(--plum)}
+[hidden]{display:none!important}
+.bar{position:fixed;left:0;right:0;bottom:0;padding:12px 18px calc(env(safe-area-inset-bottom,0px) + 14px);display:none;justify-content:center;z-index:6;background:linear-gradient(to top,var(--bg) 55%,transparent)}
 .bar.on{display:flex}
-.bar button{width:100%;max-width:680px;display:flex;justify-content:space-between;font:inherit;font-weight:700;font-size:1rem;background:var(--pink);color:#fff;border:0;border-radius:14px;padding:14px 18px;cursor:pointer}
-dialog{border:0;border-radius:22px;padding:22px;width:min(520px,calc(100% - 24px));max-height:90vh;color:var(--ink);background:#fff}
-dialog::backdrop{background:rgba(42,23,18,.55)}
-dialog h3{font-family:var(--head);font-size:1.5rem;margin-bottom:10px}
-.line{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px solid var(--line);font-size:.95rem}
-.total{font-weight:800;font-size:1.1rem;padding-top:10px}
-label{display:block;margin-top:12px;font-weight:700;font-size:.9rem}
-input,textarea{width:100%;font:inherit;margin-top:4px;padding:10px 12px;border:1px solid #cfd8c0;border-radius:12px}
-.note{font-size:.85rem;color:var(--muted);margin-top:6px}
+.bar button{width:100%;max-width:640px;display:flex;justify-content:space-between;font:inherit;font-weight:700;font-size:1rem;background:var(--pink);color:#fff;border:0;border-radius:99px;padding:14px 24px;cursor:pointer;box-shadow:0 8px 24px rgba(217,58,130,.35)}
+dialog{border:0;border-radius:24px;padding:24px;width:min(520px,calc(100% - 24px));max-height:90vh;color:var(--ink);background:#fff}
+dialog::backdrop{background:rgba(42,32,48,.5)}
+dialog h3{font-family:var(--head);font-size:1.5rem;color:var(--plum);margin-bottom:10px}
+.ono{font-family:var(--num);font-weight:700;color:var(--plum);font-size:.95rem;margin:-4px 0 6px}
+.subhead{font-family:var(--head);font-weight:800;font-size:1rem;color:var(--ink);margin:20px 0 0;padding-bottom:2px}
+.line{display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px solid var(--line);font-size:.95rem}
+.total{font-weight:800;font-size:1.1rem;padding-top:10px;border-bottom:0}
+label{display:block;margin-top:12px;font-weight:700;font-size:.88rem}
+input,textarea{width:100%;font:inherit;margin-top:4px;padding:10px 12px;border:1.5px solid var(--line);border-radius:12px;background:#fff}
+.note{font-size:.84rem;color:var(--muted);margin-top:8px}
 .err{color:#b00020;font-size:.9rem;margin-top:8px;min-height:1.2em}
-.go{margin-top:14px;width:100%;font:inherit;font-weight:700;font-size:1rem;background:#1FA855;color:#fff;border:0;border-radius:14px;padding:14px;cursor:pointer}
+.go{margin-top:14px;width:100%;font:inherit;font-weight:700;font-size:1rem;background:#1FA855;color:#fff;border:0;border-radius:99px;padding:14px;cursor:pointer}
 .close{float:right;background:none;border:0;font-size:1.6rem;cursor:pointer;color:var(--muted)}
-.subs{display:flex;gap:8px;overflow-x:auto;margin:4px 0 12px}.subs button{font:inherit;font-weight:700;font-size:.9rem;white-space:nowrap;padding:7px 16px;border-radius:99px;border:1px solid var(--line);background:#fff;color:var(--ink);cursor:pointer}.subs button[aria-pressed=true]{background:var(--choc);color:#fff;border-color:var(--choc)}[hidden]{display:none!important}
-.item.off{opacity:.55}.add[disabled]{background:#8a8a8a;cursor:default}
-footer{max-width:720px;margin:40px auto 0;padding:0 20px;color:var(--muted);font-size:.9rem}
+footer{max-width:680px;margin:36px auto 0;padding:0 22px;color:var(--muted);font-size:.85rem;text-align:center}
 @media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
 </style>
 </head>
 <body>
-<header>
-  <h1 id="shop"></h1>
-  <p>Ice cream, shakes and fresh cakes. Pick what you want, add it to your order and send it in one tap.</p>
-  <div class="info"><span id="hours"></span><span id="place"></span></div>
+<header class="hero">
+  <h1 id="shop" class="sr"></h1>
+  <img class="logo" src="logo.png" alt="Icespot – Live in Freshness" width="616" height="304">
+  <div class="info"><span id="place"></span></div>
 </header>
 <nav><div id="tabs"></div></nav>
 <main id="menu"><p class="sub" style="padding-top:30px">Loading menu…</p></main>
@@ -74,6 +83,7 @@ footer{max-width:720px;margin:40px auto 0;padding:0 20px;color:var(--muted);font
 <dialog id="dlg">
   <button class="close" id="x" aria-label="Close">×</button>
   <h3>Your order</h3>
+  <div class="ono" id="ono"></div>
   <div id="lines"></div>
   <div class="line total"><span>Total</span><span id="tot"></span></div>
   <label>Your name<input id="nm" autocomplete="name"></label>
@@ -90,24 +100,24 @@ footer{max-width:720px;margin:40px auto 0;padding:0 20px;color:var(--muted);font
 const CONFIG={
   shop:"Icespot",
   whatsapp:"919497657704",          // country code + number, no + or spaces
-  hours:"Open 11 am – 11 pm",
   place:"Pulinkunnoo",
   cakeLeadDays:1,                   // minimum notice for cakes
   currency:"\u20B9",
+  orderCities:["Oxford","Dublin","Sharjah","Dubai","Doha","Muscat","Manama","London","Paris","Rome","Tokyo","Sydney","Toronto","Singapore","Berlin","Zurich","Oslo","Lisbon","Vienna","Seoul","Cairo","Nairobi","Auckland"], // order numbers look like Dublin-47
   sheetCsvUrl:"https://docs.google.com/spreadsheets/d/e/2PACX-1vQ_u070DFZRS-jW4MfCMxCl_MM6ApENWJ2wT7Cn8dnBUEJVQGlzOBykou6lJyA-VahtkOPJgkjhPy02/pub?gid=947170811&single=true&output=csv",                   // paste your Google Sheet "published CSV" link here
   sizeLabels:["Half kg","1 kg"]     // names for Price and Price2 columns of cakes
 };
 /* ================================================ */
 // Built-in copy of the menu, used until sheetCsvUrl is set (or if the sheet cannot load).
-const DEFAULT_CSV="Section,Group,Item,Price,Price2,Photo,Available\nIce cream,Milk candy,Avocado,20,,,yes\nIce cream,Milk candy,Chikku,20,,,yes\nIce cream,Milk candy,Oreo,20,,,yes\nIce cream,Milk candy,White guava,20,,,yes\nIce cream,Milk candy,Jack fruit,20,,,yes\nIce cream,Milk candy,Strawberry,20,,,yes\nIce cream,Milk candy,Pina chikka,20,,,yes\nIce cream,Milk candy,Naruneendi,20,,,yes\nIce cream,Milk candy,Cherry,20,,,yes\nIce cream,Milk candy,Malai kulfi,25,,,yes\nIce cream,Milk candy,Fig,25,,,yes\nIce cream,Milk candy,English delight,25,,,yes\nIce cream,Milk candy,Tender coconut,25,,,yes\nIce cream,Milk candy,Semiya paayasam,25,,,yes\nIce cream,Milk candy,Custard apple,25,,,yes\nIce cream,Milk candy,Chocolate,25,,,yes\nIce cream,Milk candy,Gulab,30,,,yes\nIce cream,Milk candy,Palada,30,,,yes\nIce cream,Milk candy,Cold coffee,30,,,yes\nIce cream,Milk candy,Passion fruit,35,,,yes\nIce cream,Milk candy,Snickers,35,,,yes\nIce cream,Milk candy,Rasamalai,35,,,yes\nIce cream,Milk candy,KitKat,35,,,yes\nIce cream,Milk candy,Lotus Biscoff,40,,,yes\nIce cream,Milk candy,Blueberry,40,,,yes\nIce cream,Milk candy,Alphonso mango,40,,,yes\nIce cream,Milk candy,Boost malai,40,,,yes\nIce cream,Milk candy,Pistachio,45,,,yes\nIce cream,Milk candy,Alphonso passion,50,,,yes\nIce cream,Milk candy,Red velvet,50,,,yes\nIce cream,Milk candy,Coco pine bliss,60,,,yes\nIce cream,Milk candy,Kulfi,60,,,yes\nIce cream,Water candy,Mango,10,,,yes\nIce cream,Water candy,Watermelon,10,,,yes\nIce cream,Water candy,Mosambi,10,,,yes\nIce cream,Water candy,Orange,10,,,yes\nIce cream,Water candy,Pineapple,10,,,yes\nIce cream,Water candy,Mojito,15,,,yes\nIce cream,Water candy,Pink guava,15,,,yes\nIce cream,Water candy,Green apple,15,,,yes\nIce cream,Water candy,Mixed fruit,20,,,yes\nIce cream,Water candy,Kiwi,30,,,yes\nIce cream,Water candy,Ginger lime,30,,,yes\nShakes,Lime,Lime,25,,,yes\nShakes,Lime,Soda lime,25,,,yes\nShakes,Mojitos,Passionfruit mojito,40,,,yes\nShakes,Mojitos,Green apple mojito,40,,,yes\nShakes,Mojitos,Grape mojito,40,,,yes\nShakes,Shakes and coolers,Cold Boost,40,,,yes\nShakes,Shakes and coolers,Cold Horlicks,40,,,yes\nShakes,Shakes and coolers,Pista milk,50,,,yes\nShakes,Shakes and coolers,Rose milk,50,,,yes\nShakes,Shakes and coolers,Cold coffee,50,,,yes\nShakes,Shakes and coolers,Oreo shake,50,,,yes\nShakes,Shakes and coolers,Chocolate shake,50,,,yes\nShakes,Shakes and coolers,Strawberry shake,60,,,yes\nShakes,Shakes and coolers,Black currant shake,70,,,yes\nShakes,Shakes and coolers,Blueberry shake,70,,,yes\nShakes,Shakes and coolers,Butterscotch shake,70,,,yes\nShakes,Shakes and coolers,Fig and honey shake,80,,,yes\nShakes,Shakes and coolers,Snickers shake,80,,,yes\nShakes,Shakes and coolers,KitKat shake,80,,,yes\nShakes,Shakes and coolers,Dates shake,90,,,yes\nCakes,Classic,Vanilla,380,630,,yes\nCakes,Classic,Vanilla chocolate,430,780,,yes\nCakes,Classic,White forest,380,650,,yes\nCakes,Classic,Black forest,380,650,,yes\nCakes,Classic,Red velvet,380,700,,yes\nCakes,Classic,Red velvet cream cheese,500,850,,yes\nCakes,Classic,Pineapple,430,760,,yes\nCakes,Classic,Pista,430,780,,yes\nCakes,Classic,Strawberry,430,780,,yes\nCakes,Classic,Mango,430,750,,yes\nCakes,Classic,Butterscotch,450,780,,yes\nCakes,Classic,Chocolate Nutella,600,950,,yes\nCakes,Classic,Chocolate almond,500,850,,yes\nCakes,Classic,Chocolate,430,780,,yes\nCakes,Classic,Chocolate truffle,550,950,,yes\nCakes,Classic,Choco chip chocolate,550,950,,yes\nCakes,Classic,Vancho,480,800,,yes\nCakes,Premium,Caramel,430,780,,yes\nCakes,Premium,Nutty Bubble,500,900,,yes\nCakes,Premium,Spanish Delight,500,900,,yes\nCakes,Bento,Black Forest Bento,280,,,yes\nCakes,Bento,White Forest Bento,280,,,yes\nCakes,Bento,Other flavours Bento,300,,,yes\n";
+const DEFAULT_CSV="Section,Group,Item,Price,Price2,Photo,Available\nIce cream,Milk candy,Avocado,20,,,yes\nIce cream,Milk candy,Chikku,20,,,yes\nIce cream,Milk candy,Oreo,20,,,yes\nIce cream,Milk candy,White guava,20,,,yes\nIce cream,Milk candy,Jack fruit,20,,,yes\nIce cream,Milk candy,Strawberry,20,,,yes\nIce cream,Milk candy,Pina chikka,20,,,yes\nIce cream,Milk candy,Naruneendi,20,,,yes\nIce cream,Milk candy,Cherry,20,,,yes\nIce cream,Milk candy,Malai kulfi,25,,,yes\nIce cream,Milk candy,Fig,25,,,yes\nIce cream,Milk candy,English delight,25,,,yes\nIce cream,Milk candy,Tender coconut,25,,,yes\nIce cream,Milk candy,Semiya paayasam,25,,,yes\nIce cream,Milk candy,Custard apple,25,,,yes\nIce cream,Milk candy,Chocolate,25,,,yes\nIce cream,Milk candy,Gulab,30,,,yes\nIce cream,Milk candy,Palada,30,,,yes\nIce cream,Milk candy,Cold coffee,30,,,yes\nIce cream,Milk candy,Passion fruit,35,,,yes\nIce cream,Milk candy,Snickers,35,,,yes\nIce cream,Milk candy,Rasamalai,35,,,yes\nIce cream,Milk candy,KitKat,35,,,yes\nIce cream,Milk candy,Lotus Biscoff,40,,,yes\nIce cream,Milk candy,Blueberry,40,,,yes\nIce cream,Milk candy,Alphonso mango,40,,,yes\nIce cream,Milk candy,Boost malai,40,,,yes\nIce cream,Milk candy,Pistachio,45,,,yes\nIce cream,Milk candy,Alphonso passion,50,,,yes\nIce cream,Milk candy,Red velvet,50,,,yes\nIce cream,Milk candy,Coco pine bliss,60,,,yes\nIce cream,Milk candy,Kulfi,60,,,yes\nIce cream,Water candy,Mango,10,,,yes\nIce cream,Water candy,Watermelon,10,,,yes\nIce cream,Water candy,Mosambi,10,,,yes\nIce cream,Water candy,Orange,10,,,yes\nIce cream,Water candy,Pineapple,10,,,yes\nIce cream,Water candy,Mojito,15,,,yes\nIce cream,Water candy,Pink guava,15,,,yes\nIce cream,Water candy,Green apple,15,,,yes\nIce cream,Water candy,Mixed fruit,20,,,yes\nIce cream,Water candy,Kiwi,30,,,yes\nIce cream,Water candy,Ginger lime,30,,,yes\nShakes,Lime,Lime,25,,,yes\nShakes,Lime,Soda lime,25,,,yes\nShakes,Mojitos,Passionfruit mojito,40,,,yes\nShakes,Mojitos,Green apple mojito,40,,,yes\nShakes,Mojitos,Grape mojito,40,,,yes\nShakes,Shakes and coolers,Cold Boost,40,,,yes\nShakes,Shakes and coolers,Cold Horlicks,40,,,yes\nShakes,Shakes and coolers,Pista milk,50,,,yes\nShakes,Shakes and coolers,Rose milk,50,,,yes\nShakes,Shakes and coolers,Cold coffee,50,,,yes\nShakes,Shakes and coolers,Oreo shake,50,,,yes\nShakes,Shakes and coolers,Chocolate shake,50,,,yes\nShakes,Shakes and coolers,Strawberry shake,60,,,yes\nShakes,Shakes and coolers,Black currant shake,70,,,yes\nShakes,Shakes and coolers,Blueberry shake,70,,,yes\nShakes,Shakes and coolers,Butterscotch shake,70,,,yes\nShakes,Shakes and coolers,Fig and honey shake,80,,,yes\nShakes,Shakes and coolers,Snickers shake,80,,,yes\nShakes,Shakes and coolers,KitKat shake,80,,,yes\nShakes,Shakes and coolers,Dates shake,90,,,yes\nCakes,Classic,Vanilla,380,630,,yes\nCakes,Classic,Vanilla chocolate,430,780,,yes\nCakes,Classic,White forest,380,650,,yes\nCakes,Classic,Black forest,380,650,,yes\nCakes,Classic,Red velvet,380,700,,yes\nCakes,Classic,Red velvet cream cheese,500,850,,yes\nCakes,Classic,Pineapple,430,760,,yes\nCakes,Classic,Pista,430,780,,yes\nCakes,Classic,Strawberry,430,780,,yes\nCakes,Classic,Mango,430,750,,yes\nCakes,Classic,Butterscotch,450,780,,yes\nCakes,Classic,Chocolate Nutella,600,950,,yes\nCakes,Classic,Chocolate almond,500,850,,yes\nCakes,Classic,Chocolate,430,780,,yes\nCakes,Classic,Chocolate truffle,550,950,,yes\nCakes,Classic,Choco chip chocolate,550,950,,yes\nCakes,Classic,Vancho,480,800,,yes\nCakes,Premium,Caramel,430,780,,yes\nCakes,Premium,Nutty Bubble,500,900,,yes\nCakes,Premium,Spanish Delight,500,900,,yes\nCakes,Bento,Black Forest Bento,280,,,yes\nCakes,Bento,White Forest Bento,280,,,yes\nCakes,Bento,Other flavours Bento,300,,,yes\nIce cream,Almond Dairy > Ice candy,Mojito,20,,,yes\nIce cream,Almond Dairy > Ice candy,Grapes,20,,,yes\nIce cream,Almond Dairy > Ice candy,Passion fruit,20,,,yes\nIce cream,Almond Dairy > Milk candy,Chocolate,35,,,yes\nIce cream,Almond Dairy > Milk candy,Cookies & Cream,30,,,yes\nIce cream,Almond Dairy > Milk candy,Spanish Delight,35,,,yes\nIce cream,Almond Dairy > Milk candy,Chickoo,35,,,yes\nIce cream,Almond Dairy > Milk candy,Tender coconut,40,,,yes\nIce cream,Almond Dairy > Milk candy,Avocado,40,,,yes\nIce cream,Almond Dairy > Milk candy,Blueberry,50,,,yes\nIce cream,Almond Dairy > Milk candy,Alphonso mango,50,,,yes\n";
 
 const $=s=>document.querySelector(s), cur=CONFIG.currency;
 let MENU=[];const cart={};
 const fmt=n=>cur+n.toLocaleString("en-IN");
-$("#shop").textContent=CONFIG.shop;$("#hours").textContent=CONFIG.hours;$("#place").textContent=CONFIG.place;
+$("#shop").textContent=CONFIG.shop;$("#place").textContent=CONFIG.place;
 $("#lead").textContent=CONFIG.cakeLeadDays;document.title=CONFIG.shop+" – Order online";
 
-const LOOK={"milk candy":["🍦","#FFF3C9"],"water candy":["🧊","#D4EEF7"],"lime":["🍋","#F4F8C4"],"mojitos":["🍹","#D8F0D0"],
+const LOOK={"milk candy":["🍦","#FFF3C9"],"water candy":["🧊","#D4EEF7"],"almond dairy":["🍦","#F6E3D4"],"lime":["🍋","#F4F8C4"],"mojitos":["🍹","#D8F0D0"],
  "shakes and coolers":["🥤","#F6D9DF"],"classic":["🎂","#F2DDD2"],"premium":["🍰","#EBD3E6"],"bento":["🧁","#E4D6F2"]};
 const look=g=>LOOK[g.toLowerCase()]||["🍨","#F3E6EA"];
 const num=x=>{const s=String(x??"").replace(/[^\d.]/g,"");return s===""?NaN:parseFloat(s)};
@@ -126,13 +136,15 @@ function toMenu(csv){const rows=parseCSV(csv).filter(r=>r.some(x=>x.trim()));
   const [cs,cg,ci,cp,cq,cph,ca]=["section","group","item","price","price2","photo","available"].map(n=>h.indexOf(n));
   const menu=[];
   rows.forEach(r=>{const name=(r[ci]||"").trim(),p1=num(r[cp]);if(!name||isNaN(p1))return;
-    const sn=(r[cs]||"Menu").trim(),gn=(r[cg]||"").trim()||sn;
+    const sn=(r[cs]||"Menu").trim(),gfull=(r[cg]||"").trim()||sn,[gn,sub=""]=gfull.split(">").map(x=>x.trim());
     let m=menu.find(x=>x.title===sn);if(!m){m={title:sn,cake:/cake/i.test(sn),groups:[]};menu.push(m)}
     let g=m.groups.find(x=>x.t===gn);if(!g){g={t:gn,items:[]};m.groups.push(g)}
     const p2=num(r[cq]);
     const opts=isNaN(p2)?[["",p1]]:[[CONFIG.sizeLabels[0],p1],[CONFIG.sizeLabels[1],p2]];
     const av=(r[ca]||"yes").trim().toLowerCase();
-    g.items.push({n:name,opts,img:photoUrl(r[cph]),ok:!["no","n","false","0","sold out","soldout"].includes(av)})});
+    g.items.push({n:name,sub,opts,img:photoUrl(r[cph]),ok:!["no","n","false","0","sold out","soldout"].includes(av)})});
+  menu.forEach(m=>m.groups.forEach(g=>{const order=[...new Set(g.items.map(i=>i.sub))];
+    g.items.sort((a,b)=>order.indexOf(a.sub)-order.indexOf(b.sub))}));
   return menu}
 
 const getItem=id=>{const [mi,gi,ii]=id.split("-").map(Number);return {m:MENU[mi],g:MENU[mi].groups[gi],it:MENU[mi].groups[gi].items[ii]}};
@@ -141,10 +153,10 @@ function render(){
   $("#menu").innerHTML=MENU.map((m,mi)=>{
     const subs=m.groups.length>1?`<div class="subs" role="group" aria-label="${m.title} sections">${m.groups.map((g,gi)=>`<button data-sub="${mi}-${gi}" aria-pressed="${gi==0}">${g.t}</button>`).join("")}</div>`:"";
     const groups=m.groups.map((g,gi)=>{const [e,c]=look(g.t);
-      return `<div data-grp="${mi}-${gi}"${gi?" hidden":""}>`+g.items.map((it,ii)=>{const id=`${mi}-${gi}-${ii}`;
+      return `<div data-grp="${mi}-${gi}"${gi?" hidden":""}>`+g.items.map((it,ii)=>{const id=`${mi}-${gi}-${ii}`;const head=it.sub&&it.sub!==(g.items[ii-1]||{}).sub?`<h3 class="subhead">${it.sub}</h3>`:"";
         const sel=it.opts.length>1?`<select aria-label="Size for ${it.n}" data-sel="${id}">${it.opts.map((o,k)=>`<option value="${k}">${o[0]}</option>`).join("")}</select>`:"";
         const pic=it.img?`<img src="${it.img}" alt="${it.n}" loading="lazy" onerror="this.replaceWith('${e}')">`:e;
-        return `<div class="item${it.ok?"":" off"}"><div class="pic" style="--sw:${c}">${pic}</div><div class="txt"><b>${it.n}</b></div>
+        return head+`<div class="item${it.ok?"":" off"}"><div class="pic" style="--sw:${c}">${pic}</div><div class="txt"><b>${it.n}</b></div>
         <div class="buy">${sel}<span class="price" data-pr="${id}">${fmt(it.opts[0][1])}</span><span data-act="${id}"></span></div></div>`}).join("")+`</div>`}).join("");
     return `<section id="s${mi}"><h2>${m.title}</h2>${subs}${groups}</section>`}).join("");
   document.querySelectorAll("[data-sub]").forEach(b=>b.onclick=()=>{
@@ -157,7 +169,7 @@ function render(){
 }
 function ref(id){const {m,g,it}=getItem(id);
   const sel=document.querySelector(`[data-sel="${id}"]`);const k=sel?+sel.value:0;
-  const name=it.n+(/ice/i.test(m.title)?` (${g.t})`:"");
+  const name=it.n+(/ice/i.test(m.title)?` (${g.t}${it.sub?" – "+it.sub:""})`:"");
   return {key:id+"|"+it.opts[k][0],name,opt:it.opts[k][0],price:it.opts[k][1],cake:m.cake}}
 function paintAct(id){const box=document.querySelector(`[data-act="${id}"]`);
   if(!getItem(id).it.ok){box.innerHTML=`<button class="add" disabled>Sold out</button>`;return}
@@ -184,16 +196,21 @@ function drawLines(){const L=list();$("#lines").innerHTML=L.map(c=>`<div class="
   $("#tot").textContent=fmt(total());const hasCake=L.some(c=>c.cake);$("#dl").style.display=hasCake?"block":"none";
   if(!L.length)$("#dlg").close()}
 const dt=$("#dt");const mn=new Date();mn.setDate(mn.getDate()+CONFIG.cakeLeadDays);dt.min=mn.toISOString().slice(0,10);
-$("#open").onclick=()=>{drawLines();$("#err").textContent="";$("#dlg").showModal()};
+let orderNo="";
+function newOrderNo(){const a=new Uint32Array(2);
+  try{crypto.getRandomValues(a)}catch(e){a[0]=Math.random()*4e9;a[1]=Math.random()*4e9}
+  const c=CONFIG.orderCities;return `${c[a[0]%c.length]}-${10+a[1]%90}`}
+$("#open").onclick=()=>{drawLines();$("#err").textContent="";orderNo=newOrderNo();$("#ono").textContent="Order no. "+orderNo;$("#dlg").showModal()};
 $("#x").onclick=()=>$("#dlg").close();
 $("#send").onclick=()=>{
   const nm=$("#nm").value.trim(),ph=$("#ph").value.trim(),L=list(),hasCake=L.some(c=>c.cake);
   if(!nm||ph.replace(/\D/g,"").length<10){$("#err").textContent="Enter your name and a 10-digit phone number.";return}
   if(hasCake&&!dt.value){$("#err").textContent="Choose a date for your cake (at least "+CONFIG.cakeLeadDays+" day away).";return}
   if(hasCake&&dt.value<dt.min){$("#err").textContent="Cakes need at least "+CONFIG.cakeLeadDays+" day(s) notice. Pick a later date.";return}
-  let t=`*New order – ${CONFIG.shop}*\n\n`+L.map(c=>`${c.qty} × ${c.name}${c.opt?" ("+c.opt+")":""} – ${fmt(c.price*c.qty)}`).join("\n")+`\n\n*Total: ${fmt(total())}*\n\nName: ${nm}\nPhone: ${ph}`;
+  let t=`*New order ${orderNo} – ${CONFIG.shop}*\n\n`+L.map(c=>`${c.qty} × ${c.name}${c.opt?" ("+c.opt+")":""} – ${fmt(c.price*c.qty)}`).join("\n")+`\n\n*Total: ${fmt(total())}*\n\nName: ${nm}\nPhone: ${ph}`;
   if(hasCake)t+=`\nDate: ${dt.value}`;
   if($("#nt").value.trim())t+=`\nNotes: ${$("#nt").value.trim()}`;
+  $("#ono").textContent="Order no. "+orderNo+" – press Send in WhatsApp to finish";
   window.open(`https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(t)}`,"_blank");
 };
 </script>
