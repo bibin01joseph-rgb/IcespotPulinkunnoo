@@ -47,6 +47,7 @@ h2{font-family:var(--head);font-weight:800;font-size:1.7rem;letter-spacing:-.02e
 .subs{display:flex;gap:8px;overflow-x:auto;margin:12px 0 8px}
 .subs button{font:inherit;font-weight:700;font-size:.88rem;white-space:nowrap;padding:6px 16px;border-radius:99px;border:1.5px solid var(--line);background:#fff;color:var(--ink);cursor:pointer}
 .subs button[aria-pressed=true]{background:var(--plum);color:#fff;border-color:var(--plum)}
+.sub2{margin:2px 0 4px}.sub2 button{font-size:.82rem;padding:5px 14px;border-color:var(--plum);color:var(--plum)}.sub2 button[aria-pressed=true]{background:var(--pink);border-color:var(--pink);color:#fff}
 [hidden]{display:none!important}
 .bar{position:fixed;left:0;right:0;bottom:0;padding:12px 18px calc(env(safe-area-inset-bottom,0px) + 14px);display:none;justify-content:center;z-index:6;background:linear-gradient(to top,var(--bg) 55%,transparent)}
 .bar.on{display:flex}
@@ -153,16 +154,21 @@ function render(){
   $("#menu").innerHTML=MENU.map((m,mi)=>{
     const subs=m.groups.length>1?`<div class="subs" role="group" aria-label="${m.title} sections">${m.groups.map((g,gi)=>`<button data-sub="${mi}-${gi}" aria-pressed="${gi==0}">${g.t}</button>`).join("")}</div>`:"";
     const groups=m.groups.map((g,gi)=>{const [e,c]=look(g.t);
-      return `<div data-grp="${mi}-${gi}"${gi?" hidden":""}>`+g.items.map((it,ii)=>{const id=`${mi}-${gi}-${ii}`;const head=it.sub&&it.sub!==(g.items[ii-1]||{}).sub?`<h3 class="subhead">${it.sub}</h3>`:"";
+      const sl=[...new Set(g.items.map(i=>i.sub).filter(Boolean))];
+      const pills=sl.length>1?`<div class="subs sub2">`+sl.map((x,k)=>`<button data-s2="${mi}-${gi}" data-v="${x}" aria-pressed="${k==0}">${x}</button>`).join("")+`</div>`:"";
+      return `<div data-grp="${mi}-${gi}"${gi?" hidden":""}>`+pills+g.items.map((it,ii)=>{const id=`${mi}-${gi}-${ii}`;const head="";const hide=sl.length>1&&it.sub!==sl[0]?" hidden":"";
         const sel=it.opts.length>1?`<select aria-label="Size for ${it.n}" data-sel="${id}">${it.opts.map((o,k)=>`<option value="${k}">${o[0]}</option>`).join("")}</select>`:"";
         const pic=it.img?`<img src="${it.img}" alt="${it.n}" loading="lazy" onerror="this.replaceWith('${e}')">`:e;
-        return head+`<div class="item${it.ok?"":" off"}"><div class="pic" style="--sw:${c}">${pic}</div><div class="txt"><b>${it.n}</b></div>
+        return head+`<div class="item${it.ok?"":" off"}" data-s="${it.sub}"${hide}><div class="pic" style="--sw:${c}">${pic}</div><div class="txt"><b>${it.n}</b></div>
         <div class="buy">${sel}<span class="price" data-pr="${id}">${fmt(it.opts[0][1])}</span><span data-act="${id}"></span></div></div>`}).join("")+`</div>`}).join("");
     return `<section id="s${mi}"><h2>${m.title}</h2>${subs}${groups}</section>`}).join("");
   document.querySelectorAll("[data-sub]").forEach(b=>b.onclick=()=>{
     const [mi,gi]=b.dataset.sub.split("-");
     document.querySelectorAll(`[data-sub^="${mi}-"]`).forEach(x=>x.setAttribute("aria-pressed",x===b));
     document.querySelectorAll(`[data-grp^="${mi}-"]`).forEach(x=>x.hidden=x.dataset.grp!==`${mi}-${gi}`)});
+  document.querySelectorAll("[data-s2]").forEach(b=>b.onclick=()=>{const k=b.dataset.s2,v=b.dataset.v;
+    document.querySelectorAll(`[data-s2="${k}"]`).forEach(x=>x.setAttribute("aria-pressed",x===b));
+    document.querySelectorAll(`[data-grp="${k}"] .item`).forEach(x=>x.hidden=x.dataset.s!==v)});
   document.querySelectorAll("[data-act]").forEach(e=>paintAct(e.dataset.act));
   document.querySelectorAll("[data-sel]").forEach(s=>s.onchange=()=>{const id=s.dataset.sel;
     document.querySelector(`[data-pr="${id}"]`).textContent=fmt(ref(id).price);paintAct(id)});
