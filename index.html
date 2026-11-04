@@ -48,6 +48,11 @@ h2{font-family:var(--head);font-weight:800;font-size:1.7rem;letter-spacing:-.02e
 .subs button{font:inherit;font-weight:700;font-size:.88rem;white-space:nowrap;padding:6px 16px;border-radius:99px;border:1.5px solid var(--line);background:#fff;color:var(--ink);cursor:pointer}
 .subs button[aria-pressed=true]{background:var(--plum);color:#fff;border-color:var(--plum)}
 .sub2{margin:2px 0 4px}.sub2 button{font-size:.82rem;padding:5px 14px;border-color:var(--plum);color:var(--plum)}.sub2 button[aria-pressed=true]{background:var(--pink);border-color:var(--pink);color:#fff}
+.chk{display:flex;align-items:center;gap:8px;font-weight:500;margin-top:10px}.chk input{width:auto;margin:0}
+fieldset{border:0;padding:0;margin-top:12px}legend{font-weight:700;font-size:.88rem}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.box{margin-top:14px;padding:10px 12px;border-radius:12px;background:#FFF0F6;font-size:.88rem}.box a{color:var(--plum);font-weight:700}
+.back{display:block;margin:10px auto 0;background:none;border:0;font:inherit;font-weight:700;color:var(--plum);cursor:pointer}
 [hidden]{display:none!important}
 .bar{position:fixed;left:0;right:0;bottom:0;padding:12px 18px calc(env(safe-area-inset-bottom,0px) + 14px);display:none;justify-content:center;z-index:6;background:linear-gradient(to top,var(--bg) 55%,transparent)}
 .bar.on{display:flex}
@@ -83,17 +88,35 @@ footer{max-width:680px;margin:36px auto 0;padding:0 22px;color:var(--muted);font
 
 <dialog id="dlg">
   <button class="close" id="x" aria-label="Close">×</button>
-  <h3>Your order</h3>
-  <div class="ono" id="ono"></div>
-  <div id="lines"></div>
-  <div class="line total"><span>Total</span><span id="tot"></span></div>
-  <label>Your name<input id="nm" autocomplete="name"></label>
-  <label>Phone number<input id="ph" type="tel" autocomplete="tel"></label>
-  <label id="dl">Pickup / delivery date<input id="dt" type="date"></label>
-  <label>Message on cake or notes<textarea id="nt" rows="2" placeholder="e.g. Happy Birthday Anu, less sugar"></textarea></label>
-  <p class="note">Tap the button below to send this order to us on WhatsApp. We will confirm the price and time.</p>
-  <div class="err" id="err" role="alert"></div>
-  <button class="go" id="send">Send order on WhatsApp</button>
+  <div id="p1">
+    <h3>Your order</h3>
+    <div class="ono" id="ono"></div>
+    <div id="lines"></div>
+    <div class="line total"><span>Total</span><span id="tot"></span></div>
+    <label>Your name<input id="nm" autocomplete="name"></label>
+    <label>Phone number<input id="ph" type="tel" autocomplete="tel"></label>
+    <label>Notes (optional)<textarea id="nt" rows="2"></textarea></label>
+    <p class="note" id="n1"></p>
+    <div class="err" id="err" role="alert"></div>
+    <button class="go" id="send"></button>
+  </div>
+  <div id="p2" hidden>
+    <h3>Cake details</h3>
+    <div class="ono" id="ono2"></div>
+    <label>Writing on the cake<input id="wr" maxlength="40" placeholder="e.g. Happy Birthday Anu!"></label>
+    <label class="chk"><input type="checkbox" id="cd"> Add candles</label>
+    <label class="chk"><input type="checkbox" id="tp"> Add cake topper</label>
+    <fieldset><legend>Delivery method</legend>
+      <label class="chk"><input type="radio" name="dm" value="Store pickup" checked> Store pickup</label>
+      <label class="chk"><input type="radio" name="dm" value="Home delivery"> Home delivery</label>
+    </fieldset>
+    <label id="adl" hidden>Delivery address<textarea id="ad" rows="2"></textarea></label>
+    <div class="row2"><label>Date<input id="dt" type="date"></label><label>Time<input id="tm" type="time"></label></div>
+    <div class="box">Candles, cake topper and home delivery cost extra. We will confirm whether we can deliver to your area.<br>Please call the store to confirm your order: <a id="tel"></a></div>
+    <div class="err" id="err2" role="alert"></div>
+    <button class="go" id="send2">Send order on WhatsApp</button>
+    <button class="back" id="back">Back</button>
+  </div>
 </dialog>
 
 <script>
@@ -105,6 +128,8 @@ const CONFIG={
   cakeLeadDays:1,                   // minimum notice for cakes
   currency:"\u20B9",
   orderCities:["Oxford","Dublin","Sharjah","Dubai","Doha","Muscat","Manama","London","Paris","Rome","Tokyo","Sydney","Toronto","Singapore","Berlin","Zurich","Oslo","Lisbon","Vienna","Seoul","Cairo","Nairobi","Auckland"], // order numbers look like Dublin-47
+  storePhone:"+919497657704",        // shown in the "call the store" note
+  ordersUrl:"https://script.google.com/macros/s/AKfycbyNPZEH-0hKavsptQhFDQKZijoqlyjHtyizuQ9gdnWGR_-_VOJVznCboHbLtoaGoy-0/exec",                     // Apps Script web app link: saves orders in a private Google Sheet
   sheetCsvUrl:"https://docs.google.com/spreadsheets/d/e/2PACX-1vQ_u070DFZRS-jW4MfCMxCl_MM6ApENWJ2wT7Cn8dnBUEJVQGlzOBykou6lJyA-VahtkOPJgkjhPy02/pub?gid=947170811&single=true&output=csv",                   // paste your Google Sheet "published CSV" link here
   sizeLabels:["Half kg","1 kg"]     // names for Price and Price2 columns of cakes
 };
@@ -199,26 +224,46 @@ function update(){const n=list().reduce((s,c)=>s+c.qty,0);$("#bar").classList.to
   $("#cnt").textContent=`View order (${n} item${n>1?"s":""})`;$("#sum").textContent=fmt(total());
   if($("#dlg").open)drawLines()}
 function drawLines(){const L=list();$("#lines").innerHTML=L.map(c=>`<div class="line"><span>${c.qty} × ${c.name}${c.opt?" ("+c.opt+")":""}</span><span>${fmt(c.price*c.qty)}</span></div>`).join("");
-  $("#tot").textContent=fmt(total());const hasCake=L.some(c=>c.cake);$("#dl").style.display=hasCake?"block":"none";
+  $("#tot").textContent=fmt(total());const hasCake=L.some(c=>c.cake);$("#send").textContent=hasCake?"Next: cake details":"Send order on WhatsApp";
+  $("#n1").textContent=hasCake?"Next you will add the cake writing, delivery details and date.":"Tap the button below to send this order to us on WhatsApp. We will confirm the price and time.";
   if(!L.length)$("#dlg").close()}
 const dt=$("#dt");const mn=new Date();mn.setDate(mn.getDate()+CONFIG.cakeLeadDays);dt.min=mn.toISOString().slice(0,10);
 let orderNo="";
 function newOrderNo(){const a=new Uint32Array(2);
   try{crypto.getRandomValues(a)}catch(e){a[0]=Math.random()*4e9;a[1]=Math.random()*4e9}
   const c=CONFIG.orderCities;return `${c[a[0]%c.length]}-${10+a[1]%90}`}
-$("#open").onclick=()=>{drawLines();$("#err").textContent="";orderNo=newOrderNo();$("#ono").textContent="Order no. "+orderNo;$("#dlg").showModal()};
+$("#open").onclick=()=>{drawLines();$("#err").textContent="";orderNo=newOrderNo();$("#ono").textContent="Order no. "+orderNo;
+  $("#p1").hidden=false;$("#p2").hidden=true;$("#dlg").showModal()};
+$("#tel").textContent=CONFIG.storePhone;$("#tel").href="tel:"+CONFIG.storePhone.replace(/\s/g,"");
+document.querySelectorAll('[name="dm"]').forEach(r=>r.onchange=()=>{$("#adl").hidden=document.querySelector('[name="dm"]:checked').value!=="Home delivery"});
 $("#x").onclick=()=>$("#dlg").close();
-$("#send").onclick=()=>{
-  const nm=$("#nm").value.trim(),ph=$("#ph").value.trim(),L=list(),hasCake=L.some(c=>c.cake);
-  if(!nm||ph.replace(/\D/g,"").length<10){$("#err").textContent="Enter your name and a 10-digit phone number.";return}
-  if(hasCake&&!dt.value){$("#err").textContent="Choose a date for your cake (at least "+CONFIG.cakeLeadDays+" day away).";return}
-  if(hasCake&&dt.value<dt.min){$("#err").textContent="Cakes need at least "+CONFIG.cakeLeadDays+" day(s) notice. Pick a later date.";return}
+function post(o){if(!CONFIG.ordersUrl)return;
+  try{fetch(CONFIG.ordersUrl,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain"},body:JSON.stringify(o),keepalive:true})}catch(e){}}
+function finish(hasCake){
+  const nm=$("#nm").value.trim(),ph=$("#ph").value.trim(),L=list(),nt=$("#nt").value.trim();
+  const o={orderNo,name:nm,phone:ph,items:L.map(c=>`${c.qty} x ${c.name}${c.opt?" ("+c.opt+")":""}`).join("; "),total:total(),hasCake,notes:nt};
   let t=`*New order ${orderNo} – ${CONFIG.shop}*\n\n`+L.map(c=>`${c.qty} × ${c.name}${c.opt?" ("+c.opt+")":""} – ${fmt(c.price*c.qty)}`).join("\n")+`\n\n*Total: ${fmt(total())}*\n\nName: ${nm}\nPhone: ${ph}`;
-  if(hasCake)t+=`\nDate: ${dt.value}`;
-  if($("#nt").value.trim())t+=`\nNotes: ${$("#nt").value.trim()}`;
-  $("#ono").textContent="Order no. "+orderNo+" – press Send in WhatsApp to finish";
-  window.open(`https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(t)}`,"_blank");
-};
+  if(hasCake){
+    const m=document.querySelector('[name="dm"]:checked').value,home=m==="Home delivery",ad=$("#ad").value.trim();
+    if(!dt.value||dt.value<dt.min){$("#err2").textContent="Choose a cake date at least "+CONFIG.cakeLeadDays+" day(s) from today.";return}
+    if(!$("#tm").value){$("#err2").textContent="Choose a pickup or delivery time.";return}
+    if(home&&ad.length<8){$("#err2").textContent="Enter your delivery address.";return}
+    Object.assign(o,{writing:$("#wr").value.trim(),candles:$("#cd").checked?"Yes":"No",topper:$("#tp").checked?"Yes":"No",method:m,address:home?ad:"",date:dt.value,time:$("#tm").value});
+    t+=`\n\n*Cake details*\nWriting: ${o.writing||"None"}\nCandles: ${o.candles}${o.candles=="Yes"?" (extra)":""}\nTopper: ${o.topper}${o.topper=="Yes"?" (extra)":""}\n${m}${home?" (extra)":""}${home?"\nAddress: "+ad:""}\nDate: ${o.date}  Time: ${o.time}\n_Awaiting store confirmation_`;
+  }
+  if(nt)t+=`\nNotes: ${nt}`;
+  $("#err2").textContent="";
+  post(o);
+  $("#ono").textContent=$("#ono2").textContent="Order no. "+orderNo+" – press Send in WhatsApp to finish";
+  window.open(`https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(t)}`,"_blank")}
+$("#send").onclick=()=>{
+  const ph=$("#ph").value.trim(),hasCake=list().some(c=>c.cake);
+  if(!$("#nm").value.trim()||ph.replace(/\D/g,"").length<10){$("#err").textContent="Enter your name and a 10-digit phone number.";return}
+  $("#err").textContent="";
+  if(hasCake){$("#p1").hidden=true;$("#p2").hidden=false;$("#err2").textContent="";$("#ono2").textContent=$("#ono").textContent;return}
+  finish(false)};
+$("#send2").onclick=()=>finish(true);
+$("#back").onclick=()=>{$("#p2").hidden=true;$("#p1").hidden=false};
 </script>
 </body>
 </html>
