@@ -61,6 +61,7 @@ select#tm{width:100%;font:inherit;margin-top:4px;padding:10px 12px;border:1.5px 
 .subs button{border:2px solid var(--plum);background:var(--tab,#F6E8F4);color:var(--plum);padding:7px 16px}
 .subs button[aria-pressed=true]{background:var(--plum);color:#fff}
 .sub2 button{border-color:var(--pink);color:var(--pink);background:#fff}.sub2 button[aria-pressed=true]{background:var(--pink);color:#fff}
+.rs{font-family:var(--num);font-variant-numeric:lining-nums;font-weight:700}
 [hidden]{display:none!important}
 .bar{position:fixed;left:0;right:0;bottom:0;padding:12px 18px calc(env(safe-area-inset-bottom,0px) + 14px);display:none;justify-content:center;z-index:6;background:linear-gradient(to top,var(--bg) 55%,transparent)}
 .bar.on{display:flex}
@@ -250,7 +251,7 @@ function drawLines(){const L=list();
   const nc=L.filter(c=>!c.cake).reduce((n,c)=>n+c.price*c.qty,0),parts=[],w=hasCake?"your other items":"this order";
   if(nc>0)parts.push(nc>=CONFIG.freeDeliveryFrom?`Home delivery is free for ${w} (${fmt(CONFIG.freeDeliveryFrom)} and above).`:`Home delivery for ${w}: ${fmt(CONFIG.deliveryFee)} charge below ${fmt(CONFIG.freeDeliveryFrom)}. Add ${fmt(CONFIG.freeDeliveryFrom-nc)} more for free delivery.`);
   if(hasCake)parts.push("Free delivery does not apply to cakes. Cake delivery is charged extra and confirmed by the store.");
-  $("#dnote").innerHTML=parts.join("<br>");$("#dnote").hidden=!parts.length;
+  $("#dnote").innerHTML=parts.join("<br>").replace(/\u20B9[\d,]+/g,m=>`<span class="rs">${m}</span>`);$("#dnote").hidden=!parts.length;
   $("#send").textContent=hasCake?"Next: cake details":"Send order on WhatsApp";
   $("#n1").textContent=hasCake?"Next you will add the cake writing, delivery details and date.":"Tap the button below to send this order to us on WhatsApp. We will confirm the price and time.";
   if(!L.length)$("#dlg").close()}
