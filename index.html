@@ -62,6 +62,8 @@ select#tm{width:100%;font:inherit;margin-top:4px;padding:10px 12px;border:1.5px 
 .subs button[aria-pressed=true]{background:var(--plum);color:#fff}
 .sub2 button{border-color:var(--pink);color:var(--pink);background:#fff}.sub2 button[aria-pressed=true]{background:var(--pink);color:#fff}
 .rs{font-family:var(--num);font-variant-numeric:lining-nums;font-weight:700}
+.bs{display:inline-block;margin-left:6px;padding:1px 8px;border-radius:99px;background:#FFE08A;color:#6B4200;font-size:.68rem;font-weight:700;letter-spacing:.02em;vertical-align:middle;white-space:nowrap}
+.item.off b{text-decoration:line-through}
 [hidden]{display:none!important}
 .bar{position:fixed;left:0;right:0;bottom:0;padding:12px 18px calc(env(safe-area-inset-bottom,0px) + 14px);display:none;justify-content:center;z-index:6;background:linear-gradient(to top,var(--bg) 55%,transparent)}
 .bar.on{display:flex}
@@ -117,7 +119,15 @@ footer{max-width:680px;margin:36px auto 0;padding:0 22px;color:var(--muted);font
     <div id="wbox"></div>
     <label class="chk"><input type="checkbox" id="cd"> Add candles</label>
     <label class="chk"><input type="checkbox" id="tp"> Add cake topper</label>
-    <fieldset><legend>Delivery method</legend>
+    <p class="note">Candles and cake toppers are supplied by Icespot and cost extra.</p>
+    <div class="err" id="err2" role="alert"></div>
+    <button class="go" id="send2">Next: pickup or delivery</button>
+    <button class="back" id="back">Back</button>
+  </div>
+  <div id="p3" hidden>
+    <h3>Pickup or delivery</h3>
+    <div class="ono" id="ono3"></div>
+    <fieldset>
       <label class="chk"><input type="radio" name="dm" value="Store pickup" checked> Store pickup</label>
       <label class="chk"><input type="radio" name="dm" value="Home delivery"> Home delivery</label>
     </fieldset>
@@ -127,11 +137,15 @@ footer{max-width:680px;margin:36px auto 0;padding:0 22px;color:var(--muted);font
       <label>Or paste a Google Maps location link<input id="mp" type="url" placeholder="https://maps.app.goo.gl/..."></label>
       <p class="note">Open Google Maps, tap your location, choose Share, copy the link and paste it here. It is the easiest way for us to find you.</p>
     </div>
-    <div class="row2"><label>Date<input id="dt" type="date"></label><label>Time<select id="tm"><option value="">Select time</option></select></label></div>
-    <div class="box">Candles, cake topper and home delivery cost extra, and free delivery does not apply to cakes. We will confirm whether we can deliver to your area.<br>Please call the store to confirm your order: <a id="tel"></a></div>
-    <div class="err" id="err2" role="alert"></div>
-    <button class="go" id="send2">Send order on WhatsApp</button>
-    <button class="back" id="back">Back</button>
+    <div class="box" id="dnote3" hidden></div>
+    <div id="cdt" hidden>
+      <div class="row2"><label>Date<input id="dt" type="date"></label><label>Time<select id="tm"><option value="">Select time</option></select></label></div>
+      <p class="note" id="slotnote"></p>
+      <div class="box">Candles, cake topper and home delivery cost extra, and free delivery does not apply to cakes. We will confirm whether we can deliver to your area.<br>Please call the store to confirm your order: <a id="tel"></a></div>
+    </div>
+    <div class="err" id="err3" role="alert"></div>
+    <button class="go" id="send3">Send order on WhatsApp</button>
+    <button class="back" id="back3">Back</button>
   </div>
 </dialog>
 
@@ -145,16 +159,16 @@ const CONFIG={
   currency:"\u20B9",
   orderCities:["Oxford","Dublin","Sharjah","Dubai","Doha","Muscat","Manama","London","Paris","Rome","Tokyo","Sydney","Toronto","Singapore","Berlin","Zurich","Oslo","Lisbon","Vienna","Seoul","Cairo","Nairobi","Auckland"], // order numbers look like Dublin-47
   storePhone:"+919497657704",        // shown in the "call the store" note
-  slotFrom:"10:00", slotTo:"22:30", slotMinutes:30, sundayFrom:"16:00",   // delivery/pickup time slots
+  slotFrom:"11:30", slotTo:"22:30", slotMinutes:30, sundayFrom:"16:00", slotNote:"Store opens at 11 AM. Collection from 11:30 AM (Sundays from 4 PM).",   // delivery/pickup time slots
   ordersUrl:"https://script.google.com/macros/s/AKfycbyNPZEH-0hKavsptQhFDQKZijoqlyjHtyizuQ9gdnWGR_-_VOJVznCboHbLtoaGoy-0/exec",                     // Apps Script web app link: saves orders in a private Google Sheet
   sheetCsvUrl:"https://docs.google.com/spreadsheets/d/e/2PACX-1vQ_u070DFZRS-jW4MfCMxCl_MM6ApENWJ2wT7Cn8dnBUEJVQGlzOBykou6lJyA-VahtkOPJgkjhPy02/pub?gid=947170811&single=true&output=csv",                   // paste your Google Sheet "published CSV" link here
   deliveryFee:20, freeDeliveryFrom:150,   // delivery charge below this order value; free from it
-  sizeLabelsByGroup:{"Family Packs":["1 litre","½ litre"]},   // size names for groups that are not cakes
+  sizeLabelsByGroup:{"Family Packs":["1 Ltr","½ Ltr"]},   // size names for groups that are not cakes
   sizeLabels:["Half kg","1 kg"]     // names for Price and Price2 columns of cakes
 };
 /* ================================================ */
 // Built-in copy of the menu, used until sheetCsvUrl is set (or if the sheet cannot load).
-const DEFAULT_CSV="Section,Group,Item,Price,Price2,Photo,Available\nIce cream,Milk candy,Avocado,20,,,yes\nIce cream,Milk candy,Chikku,20,,,yes\nIce cream,Milk candy,Oreo,20,,,yes\nIce cream,Milk candy,White guava,20,,,yes\nIce cream,Milk candy,Jack fruit,20,,,yes\nIce cream,Milk candy,Strawberry,20,,,yes\nIce cream,Milk candy,Pina chikka,20,,,yes\nIce cream,Milk candy,Naruneendi,20,,,yes\nIce cream,Milk candy,Cherry,20,,,yes\nIce cream,Milk candy,Malai kulfi,25,,,yes\nIce cream,Milk candy,Fig,25,,,yes\nIce cream,Milk candy,English delight,25,,,yes\nIce cream,Milk candy,Tender coconut,25,,,yes\nIce cream,Milk candy,Semiya paayasam,25,,,yes\nIce cream,Milk candy,Custard apple,25,,,yes\nIce cream,Milk candy,Chocolate,25,,,yes\nIce cream,Milk candy,Gulab,30,,,yes\nIce cream,Milk candy,Palada,30,,,yes\nIce cream,Milk candy,Cold coffee,30,,,yes\nIce cream,Milk candy,Passion fruit,35,,,yes\nIce cream,Milk candy,Snickers,35,,,yes\nIce cream,Milk candy,Rasamalai,35,,,yes\nIce cream,Milk candy,KitKat,35,,,yes\nIce cream,Milk candy,Lotus Biscoff,40,,,yes\nIce cream,Milk candy,Blueberry,40,,,yes\nIce cream,Milk candy,Alphonso mango,40,,,yes\nIce cream,Milk candy,Boost malai,40,,,yes\nIce cream,Milk candy,Pistachio,45,,,yes\nIce cream,Milk candy,Alphonso passion,50,,,yes\nIce cream,Milk candy,Red velvet,50,,,yes\nIce cream,Milk candy,Coco pine bliss,60,,,yes\nIce cream,Milk candy,Kulfi,60,,,yes\nIce cream,Water candy,Mango,10,,,yes\nIce cream,Water candy,Watermelon,10,,,yes\nIce cream,Water candy,Mosambi,10,,,yes\nIce cream,Water candy,Orange,10,,,yes\nIce cream,Water candy,Pineapple,10,,,yes\nIce cream,Water candy,Mojito,15,,,yes\nIce cream,Water candy,Pink guava,15,,,yes\nIce cream,Water candy,Green apple,15,,,yes\nIce cream,Water candy,Mixed fruit,20,,,yes\nIce cream,Water candy,Kiwi,30,,,yes\nIce cream,Water candy,Ginger lime,30,,,yes\nShakes,Lime,Lime,25,,,yes\nShakes,Lime,Soda lime,25,,,yes\nShakes,Mojitos,Passionfruit mojito,40,,,yes\nShakes,Mojitos,Green apple mojito,40,,,yes\nShakes,Mojitos,Grape mojito,40,,,yes\nShakes,Shakes and coolers,Cold Boost,40,,,yes\nShakes,Shakes and coolers,Cold Horlicks,40,,,yes\nShakes,Shakes and coolers,Pista milk,50,,,yes\nShakes,Shakes and coolers,Rose milk,50,,,yes\nShakes,Shakes and coolers,Cold coffee,50,,,yes\nShakes,Shakes and coolers,Oreo shake,50,,,yes\nShakes,Shakes and coolers,Chocolate shake,50,,,yes\nShakes,Shakes and coolers,Strawberry shake,60,,,yes\nShakes,Shakes and coolers,Black currant shake,70,,,yes\nShakes,Shakes and coolers,Blueberry shake,70,,,yes\nShakes,Shakes and coolers,Butterscotch shake,70,,,yes\nShakes,Shakes and coolers,Fig and honey shake,80,,,yes\nShakes,Shakes and coolers,Snickers shake,80,,,yes\nShakes,Shakes and coolers,KitKat shake,80,,,yes\nShakes,Shakes and coolers,Dates shake,90,,,yes\nCakes,Classic,Vanilla,380,630,,yes\nCakes,Classic,Vanilla chocolate,430,780,,yes\nCakes,Classic,White forest,380,650,,yes\nCakes,Classic,Black forest,380,650,,yes\nCakes,Classic,Red velvet,380,700,,yes\nCakes,Classic,Red velvet cream cheese,500,850,,yes\nCakes,Classic,Pineapple,430,760,,yes\nCakes,Classic,Pista,430,780,,yes\nCakes,Classic,Strawberry,430,780,,yes\nCakes,Classic,Mango,430,750,,yes\nCakes,Classic,Butterscotch,450,780,,yes\nCakes,Classic,Chocolate Nutella,600,950,,yes\nCakes,Classic,Chocolate almond,500,850,,yes\nCakes,Classic,Chocolate,430,780,,yes\nCakes,Classic,Chocolate truffle,550,950,,yes\nCakes,Classic,Choco chip chocolate,550,950,,yes\nCakes,Classic,Vancho,480,800,,yes\nCakes,Premium,Caramel,430,780,,yes\nCakes,Premium,Nutty Bubble,500,900,,yes\nCakes,Premium,Spanish Delight,500,900,,yes\nCakes,Bento,Black Forest Bento,280,,,yes\nCakes,Bento,White Forest Bento,280,,,yes\nCakes,Bento,Other flavours Bento,300,,,yes\nIce cream,Water candy,Mojito,20,,,yes\nIce cream,Water candy,Grapes,20,,,yes\nIce cream,Water candy,Passion fruit,20,,,yes\nIce cream,Milk candy,Chocolate,35,,,yes\nIce cream,Milk candy,Cookies & Cream,30,,,yes\nIce cream,Milk candy,Spanish Delight,35,,,yes\nIce cream,Milk candy,Chickoo,35,,,yes\nIce cream,Milk candy,Tender coconut,40,,,yes\nIce cream,Milk candy,Avocado,40,,,yes\nIce cream,Milk candy,Blueberry,50,,,yes\nIce cream,Milk candy,Alphonso mango,50,,,yes\nIce cream,Family Packs,Vanilla,225,120,,yes\nIce cream,Family Packs,Chikku,320,130,,yes\nIce cream,Family Packs,Strawberry,240,170,,yes\nIce cream,Family Packs,Nut Butterscotch,320,170,,yes\nIce cream,Family Packs,Tender coconut,380,200,,yes\nIce cream,Family Packs,Avocado,410,220,,yes\nIce cream,Family Packs,Cookies & Cream,320,170,,yes\nIce cream,Family Packs,Jack fruit,340,180,,yes\nIce cream,Family Packs,Spanish Delight,340,180,,yes\nIce cream,Cones,Vanilla,40,,,yes\nIce cream,Cones,Butterscotch,40,,,yes\nIce cream,Cones,Pista,40,,,yes\nIce cream,Cones,Chocolate,50,,,yes\n";
+const DEFAULT_CSV="Section,Group,Item,Price,Price2,Photo,Available,Best seller\nIce cream,Milk candy,Avocado,20,,,yes,yes\nIce cream,Milk candy,Chikku,20,,,yes,\nIce cream,Milk candy,Oreo,20,,,yes,yes\nIce cream,Milk candy,White guava,20,,,yes,\nIce cream,Milk candy,Jack fruit,20,,,yes,\nIce cream,Milk candy,Strawberry,20,,,yes,\nIce cream,Milk candy,Pina chikka,20,,,yes,\nIce cream,Milk candy,Naruneendi,20,,,yes,\nIce cream,Milk candy,Cherry,20,,,yes,\nIce cream,Milk candy,Malai kulfi,25,,,yes,\nIce cream,Milk candy,Fig,25,,,yes,\nIce cream,Milk candy,English delight,25,,,yes,\nIce cream,Milk candy,Tender coconut,25,,,yes,\nIce cream,Milk candy,Semiya paayasam,25,,,yes,\nIce cream,Milk candy,Custard apple,25,,,yes,\nIce cream,Milk candy,Chocolate,25,,,yes,\nIce cream,Milk candy,Gulab,30,,,yes,\nIce cream,Milk candy,Palada,30,,,yes,\nIce cream,Milk candy,Cold coffee,30,,,yes,\nIce cream,Milk candy,Passion fruit,35,,,yes,\nIce cream,Milk candy,Snickers,35,,,yes,yes\nIce cream,Milk candy,Rasamalai,35,,,yes,\nIce cream,Milk candy,KitKat,35,,,yes,\nIce cream,Milk candy,Lotus Biscoff,40,,,yes,\nIce cream,Milk candy,Blueberry,40,,,yes,\nIce cream,Milk candy,Alphonso mango,40,,,yes,\nIce cream,Milk candy,Boost malai,40,,,yes,\nIce cream,Milk candy,Pistachio,45,,,yes,\nIce cream,Milk candy,Alphonso passion,50,,,yes,\nIce cream,Milk candy,Red velvet,50,,,yes,\nIce cream,Milk candy,Coco pine bliss,60,,,yes,\nIce cream,Milk candy,Kulfi,60,,,yes,yes\nIce cream,Water candy,Mango,10,,,yes,\nIce cream,Water candy,Watermelon,10,,,yes,\nIce cream,Water candy,Mosambi,10,,,yes,\nIce cream,Water candy,Orange,10,,,yes,\nIce cream,Water candy,Pineapple,10,,,yes,\nIce cream,Water candy,Mojito,15,,,yes,\nIce cream,Water candy,Pink guava,15,,,yes,\nIce cream,Water candy,Green apple,15,,,yes,\nIce cream,Water candy,Mixed fruit,20,,,yes,\nIce cream,Water candy,Kiwi,30,,,yes,\nIce cream,Water candy,Ginger lime,30,,,yes,\nShakes,Lime,Lime,25,,,yes,\nShakes,Lime,Soda lime,25,,,yes,\nShakes,Mojitos,Passionfruit mojito,40,,,yes,\nShakes,Mojitos,Green apple mojito,40,,,yes,\nShakes,Mojitos,Grape mojito,40,,,yes,\nShakes,Shakes and coolers,Cold Boost,40,,,yes,\nShakes,Shakes and coolers,Cold Horlicks,40,,,yes,\nShakes,Shakes and coolers,Pista milk,50,,,yes,\nShakes,Shakes and coolers,Rose milk,50,,,yes,\nShakes,Shakes and coolers,Cold coffee,50,,,yes,yes\nShakes,Shakes and coolers,Oreo shake,50,,,yes,yes\nShakes,Shakes and coolers,Chocolate shake,50,,,yes,\nShakes,Shakes and coolers,Strawberry shake,60,,,yes,\nShakes,Shakes and coolers,Black currant shake,70,,,yes,\nShakes,Shakes and coolers,Blueberry shake,70,,,yes,\nShakes,Shakes and coolers,Butterscotch shake,70,,,yes,\nShakes,Shakes and coolers,Fig and honey shake,80,,,yes,\nShakes,Shakes and coolers,Snickers shake,80,,,yes,\nShakes,Shakes and coolers,KitKat shake,80,,,yes,\nShakes,Shakes and coolers,Dates shake,90,,,yes,\nCakes,Classic,Vanilla,380,630,,yes,\nCakes,Classic,Vanilla chocolate,430,780,,yes,\nCakes,Classic,White forest,380,650,,yes,\nCakes,Classic,Black forest,380,650,,yes,\nCakes,Classic,Red velvet,380,700,,yes,\nCakes,Classic,Red velvet cream cheese,500,850,,yes,\nCakes,Classic,Pineapple,430,760,,yes,\nCakes,Classic,Pista,430,780,,yes,\nCakes,Classic,Strawberry,430,780,,yes,\nCakes,Classic,Mango,430,750,,yes,\nCakes,Classic,Butterscotch,450,780,,yes,\nCakes,Classic,Chocolate Nutella,600,950,,yes,\nCakes,Classic,Chocolate almond,500,850,,yes,\nCakes,Classic,Chocolate,430,780,,yes,\nCakes,Classic,Chocolate truffle,550,950,,yes,\nCakes,Classic,Choco chip chocolate,550,950,,yes,\nCakes,Classic,Vancho,480,800,,yes,\nCakes,Premium,Caramel,430,780,,yes,\nCakes,Premium,Nutty Bubble,500,900,,yes,\nCakes,Premium,Spanish Delight,500,900,,yes,\nCakes,Bento,Black Forest Bento,280,,,yes,\nCakes,Bento,White Forest Bento,280,,,yes,\nCakes,Bento,Other flavours Bento,300,,,yes,\nIce cream,Water candy,Mojito,20,,,yes,\nIce cream,Water candy,Grapes,20,,,yes,\nIce cream,Water candy,Passion fruit,20,,,yes,\nIce cream,Milk candy,Chocolate,35,,,yes,\nIce cream,Milk candy,Cookies & Cream,30,,,yes,\nIce cream,Milk candy,Spanish Delight,35,,,yes,yes\nIce cream,Milk candy,Chickoo,35,,,yes,\nIce cream,Milk candy,Tender coconut,40,,,yes,\nIce cream,Milk candy,Avocado,40,,,yes,\nIce cream,Milk candy,Blueberry,50,,,yes,\nIce cream,Milk candy,Alphonso mango,50,,,yes,\nIce cream,Family Packs,Vanilla,225,120,,yes,\nIce cream,Family Packs,Chikku,320,130,,yes,\nIce cream,Family Packs,Strawberry,240,170,,yes,\nIce cream,Family Packs,Nut Butterscotch,320,170,,yes,\nIce cream,Family Packs,Tender coconut,380,200,,yes,\nIce cream,Family Packs,Avocado,410,220,,yes,\nIce cream,Family Packs,Cookies & Cream,320,170,,yes,\nIce cream,Family Packs,Jack fruit,340,180,,yes,\nIce cream,Family Packs,Spanish Delight,340,180,,yes,\nIce cream,Cones,Vanilla,40,,,yes,\nIce cream,Cones,Butterscotch,40,,,yes,\nIce cream,Cones,Pista,40,,,yes,\nIce cream,Cones,Chocolate,50,,,yes,\n";
 
 const $=s=>document.querySelector(s), cur=CONFIG.currency;
 let MENU=[];const cart={};
@@ -177,17 +191,17 @@ function photoUrl(u){u=(u||"").trim();if(!u)return"";
   const m=u.match(/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?(?:export=\w+&)?id=)([\w-]+)/);
   return m?`https://drive.google.com/thumbnail?id=${m[1]}&sz=w400`:u}
 function toMenu(csv){const rows=parseCSV(csv).filter(r=>r.some(x=>x.trim()));
-  const h=rows.shift().map(x=>x.trim().toLowerCase());
-  const [cs,cg,ci,cp,cq,cph,ca]=["section","group","item","price","price2","photo","available"].map(n=>h.indexOf(n));
+  const h=rows.shift().map(x=>x.trim().toLowerCase().replace(/\s+/g,""));
+  const [cs,cg,ci,cp,cq,cph,ca,cb]=["section","group","item","price","price2","photo","available","bestseller"].map(n=>h.indexOf(n));
   const menu=[];
   rows.forEach(r=>{const name=(r[ci]||"").trim(),p1=num(r[cp]);if(!name||isNaN(p1))return;
     const sn=(r[cs]||"Menu").trim(),gfull=(r[cg]||"").trim()||sn,[gn,sub=""]=gfull.split(">").map(x=>x.trim());
     let m=menu.find(x=>x.title===sn);if(!m){m={title:sn,cake:/cake/i.test(sn),groups:[]};menu.push(m)}
     let g=m.groups.find(x=>x.t===gn);if(!g){g={t:gn,items:[]};m.groups.push(g)}
     const p2=num(r[cq]);
-    const lab=CONFIG.sizeLabelsByGroup[gn]||CONFIG.sizeLabels,opts=isNaN(p2)?[["",p1]]:[[lab[0],p1],[lab[1],p2]];
+    const lk=Object.keys(CONFIG.sizeLabelsByGroup).find(k=>k.toLowerCase()===gn.toLowerCase()),lab=lk?CONFIG.sizeLabelsByGroup[lk]:CONFIG.sizeLabels,opts=isNaN(p2)?[["",p1]]:[[lab[0],p1],[lab[1],p2]];
     const av=(r[ca]||"yes").trim().toLowerCase();
-    g.items.push({n:name,sub,opts,img:photoUrl(r[cph]),ok:!["no","n","false","0","sold out","soldout"].includes(av)})});
+    g.items.push({n:name,sub,best:["yes","y","true","1"].includes((r[cb]||"").trim().toLowerCase()),opts,img:photoUrl(r[cph]),ok:!["no","n","false","0","sold out","soldout"].includes(av)})});
   menu.forEach(m=>m.groups.forEach(g=>{const order=[...new Set(g.items.map(i=>i.sub))];
     g.items.sort((a,b)=>order.indexOf(a.sub)-order.indexOf(b.sub))}));
   return menu}
@@ -203,7 +217,7 @@ function render(){
       return `<div data-grp="${mi}-${gi}"${gi?" hidden":""}>`+pills+g.items.map((it,ii)=>{const id=`${mi}-${gi}-${ii}`;const head="";const hide=sl.length>1&&it.sub!==sl[0]?" hidden":"";
         const sel=it.opts.length>1?`<select aria-label="Size for ${it.n}" data-sel="${id}">${it.opts.map((o,k)=>`<option value="${k}">${o[0]}</option>`).join("")}</select>`:"";
         const pic=it.img?`<img src="${it.img}" alt="${it.n}" loading="lazy" onerror="this.replaceWith('${e}')">`:e;
-        return head+`<div class="item${it.ok?"":" off"}" data-s="${it.sub}"${hide}><div class="pic" style="--sw:${c}">${pic}</div><div class="txt"><b>${it.n}</b></div>
+        return head+`<div class="item${it.ok?"":" off"}" data-s="${it.sub}"${hide}><div class="pic" style="--sw:${c}">${pic}</div><div class="txt"><b>${it.n}${it.best?` <span class="bs">★ Best seller</span>`:""}</b></div>
         <div class="buy">${sel}<span class="price" data-pr="${id}">${fmt(it.opts[0][1])}</span><span data-act="${id}"></span></div></div>`}).join("")+`</div>`}).join("");
     return `<section id="s${mi}"><h2>${m.title}</h2>${subs}${groups}</section>`}).join("");
   document.querySelectorAll("[data-sub]").forEach(b=>b.onclick=()=>{
@@ -222,7 +236,7 @@ function ref(id){const {m,g,it}=getItem(id);
   const name=it.n+(/ice/i.test(m.title)?` (${g.t}${it.sub?" – "+it.sub:""})`:"");
   return {key:id+"|"+it.opts[k][0],name,opt:it.opts[k][0],price:it.opts[k][1],cake:m.cake}}
 function paintAct(id){const box=document.querySelector(`[data-act="${id}"]`);
-  if(!getItem(id).it.ok){box.innerHTML=`<button class="add" disabled>Sold out</button>`;return}
+  if(!getItem(id).it.ok){box.innerHTML=`<button class="add" disabled>Unavailable</button>`;return}
   const r=ref(id),c=cart[r.key];
   box.innerHTML=c?`<span class="qty"><button aria-label="Remove one">−</button><b>${c.qty}</b><button aria-label="Add one">+</button></span>`:`<button class="add">Add</button>`;
   const b=box.querySelectorAll("button");
@@ -248,12 +262,9 @@ function drawLines(){const L=list();
     return `<div class="oline"><div class="oname"><b>${c.name}</b>${sz}</div><button class="del" data-ld="${c.key}" aria-label="Remove item">✕</button>
     <div class="oqty"><span class="qty"><button data-lm="${c.key}" aria-label="Remove one">−</button><b>${c.qty}</b><button data-lp="${c.key}" aria-label="Add one">+</button></span></div><div class="oprice">${fmt(c.price*c.qty)}</div></div>`}).join("");
   $("#tot").textContent=fmt(total());const hasCake=L.some(c=>c.cake);
-  const nc=L.filter(c=>!c.cake).reduce((n,c)=>n+c.price*c.qty,0),parts=[],w=hasCake?"your other items":"this order";
-  if(nc>0)parts.push(nc>=CONFIG.freeDeliveryFrom?`Home delivery is free for ${w} (${fmt(CONFIG.freeDeliveryFrom)} and above).`:`Home delivery for ${w}: ${fmt(CONFIG.deliveryFee)} charge below ${fmt(CONFIG.freeDeliveryFrom)}. Add ${fmt(CONFIG.freeDeliveryFrom-nc)} more for free delivery.`);
-  if(hasCake)parts.push("Free delivery does not apply to cakes. Cake delivery is charged extra and confirmed by the store.");
-  $("#dnote").innerHTML=parts.join("<br>").replace(/\u20B9[\d,]+/g,m=>`<span class="rs">${m}</span>`);$("#dnote").hidden=!parts.length;
-  $("#send").textContent=hasCake?"Next: cake details":"Send order on WhatsApp";
-  $("#n1").textContent=hasCake?"Next you will add the cake writing, delivery details and date.":"Tap the button below to send this order to us on WhatsApp. We will confirm the price and time.";
+  const dp=delivParts();$("#dnote").innerHTML=rsHtml(dp);$("#dnote").hidden=!dp.length;
+  $("#send").textContent=hasCake?"Next: cake details":"Next: pickup or delivery";
+  $("#n1").textContent=hasCake?"Next you will add the cake writing, then choose pickup or delivery.":"Next, choose store pickup or home delivery.";
   if(!L.length)$("#dlg").close()}
 function afterEdit(){document.querySelectorAll("[data-act]").forEach(e=>paintAct(e.dataset.act));update()}
 $("#lines").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;
@@ -270,7 +281,7 @@ function newOrderNo(){const a=new Uint32Array(2);
   try{crypto.getRandomValues(a)}catch(e){a[0]=Math.random()*4e9;a[1]=Math.random()*4e9}
   const c=CONFIG.orderCities;return `${c[a[0]%c.length]}-${10+a[1]%90}`}
 $("#open").onclick=()=>{drawLines();$("#err").textContent="";orderNo=newOrderNo();$("#ono").textContent="Order no. "+orderNo;
-  $("#p1").hidden=false;$("#p2").hidden=true;$("#dlg").showModal()};
+  $("#p1").hidden=false;$("#p2").hidden=true;$("#p3").hidden=true;$("#dlg").showModal()};
 $("#tel").textContent=CONFIG.storePhone;$("#tel").href="tel:"+CONFIG.storePhone.replace(/\s/g,"");
 document.querySelectorAll('[name="dm"]').forEach(r=>r.onchange=()=>{$("#adl").hidden=document.querySelector('[name="dm"]:checked').value!=="Home delivery"});
 $("#x").onclick=()=>$("#dlg").close();
@@ -287,37 +298,52 @@ function buildSlots(){const sel=$("#tm"),keep=sel.value,toM=x=>{const[a,b]=x.spl
 dt.addEventListener("change",buildSlots);
 function post(o){if(!CONFIG.ordersUrl)return;
   try{fetch(CONFIG.ordersUrl,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain"},body:JSON.stringify(o),keepalive:true})}catch(e){}}
-function finish(hasCake){
-  const nm=$("#nm").value.trim(),ph=$("#ph").value.trim(),L=list(),nt=$("#nt").value.trim();
-  const o={orderNo,name:nm,phone:ph,items:L.map(c=>`${c.qty} x ${c.name}${c.opt?" ("+c.opt+")":""}`).join("; "),total:total(),hasCake,notes:nt};
+const deliveryOn=()=>document.querySelector('[name="dm"]:checked').value==="Home delivery";
+function delivParts(){const L=list(),hasCake=L.some(c=>c.cake),nc=L.filter(c=>!c.cake).reduce((n,c)=>n+c.price*c.qty,0),p=[],w=hasCake?"your other items":"this order";
+  if(nc>0)p.push(nc>=CONFIG.freeDeliveryFrom?`Home delivery is free for ${w} (${fmt(CONFIG.freeDeliveryFrom)} and above).`:`Home delivery for ${w}: ${fmt(CONFIG.deliveryFee)} charge below ${fmt(CONFIG.freeDeliveryFrom)}. Add ${fmt(CONFIG.freeDeliveryFrom-nc)} more for free delivery.`);
+  if(hasCake)p.push("Free delivery does not apply to cakes. Cake delivery is charged extra and confirmed by the store.");
+  return p}
+const rsHtml=a=>a.join("<br>").replace(/\u20B9[\d,]+/g,m=>`<span class="rs">${m}</span>`);
+function syncMethod(){const home=deliveryOn();$("#adl").hidden=!home;$("#dnote3").innerHTML=rsHtml(delivParts());$("#dnote3").hidden=!home}
+document.querySelectorAll('[name="dm"]').forEach(r=>r.onchange=syncMethod);
+$("#slotnote").textContent=CONFIG.slotNote;
+function goP3(){const hasCake=list().some(c=>c.cake);buildSlots();$("#cdt").hidden=!hasCake;$("#ono3").textContent=$("#ono").textContent;$("#err3").textContent="";syncMethod();
+  $("#p1").hidden=true;$("#p2").hidden=true;$("#p3").hidden=false}
+function finish(){
+  const L=list(),hasCake=L.some(c=>c.cake),nm=$("#nm").value.trim(),ph=$("#ph").value.trim(),nt=$("#nt").value.trim();
+  const m=document.querySelector('[name="dm"]:checked').value,home=deliveryOn(),ad=$("#ad").value.trim(),mp=$("#mp").value.trim(),okMp=/^https?:\/\/\S+$/i.test(mp),E=x=>{$("#err3").textContent=x};
+  if(hasCake){if(!dt.value||dt.value<dt.min)return E("Choose a cake date at least "+CONFIG.cakeLeadDays+" day(s) from today.");if(!$("#tm").value)return E("Choose a pickup or delivery time slot.")}
+  if(home&&mp&&!okMp)return E("Paste the full Google Maps link, or clear it and type your address.");
+  if(home&&ad.length<8&&!okMp)return E("Enter your delivery address or paste a Google Maps location link.");
+  E("");
+  const o={orderNo,name:nm,phone:ph,items:L.map(c=>`${c.qty} x ${c.name}${c.opt?" ("+c.opt+")":""}`).join("; "),total:total(),hasCake,notes:nt,method:m,address:home?[ad,mp?"Map: "+mp:""].filter(Boolean).join(" | "):""};
   let t=`*New order ${orderNo} – ${CONFIG.shop}*\n\n`+L.map(c=>`${c.qty} × ${c.name}${c.opt?" ("+c.opt+")":""} – ${fmt(c.price*c.qty)}`).join("\n")+`\n\n*Total: ${fmt(total())}*\n\nName: ${nm}\nPhone: ${ph}`;
   if(hasCake){
-    const m=document.querySelector('[name="dm"]:checked').value,home=m==="Home delivery",ad=$("#ad").value.trim(),mp=$("#mp").value.trim();
-    const u=cakeUnits(),w=[...document.querySelectorAll(".wr")].map(i=>i.value.trim());
-    if(!dt.value||dt.value<dt.min){$("#err2").textContent="Choose a cake date at least "+CONFIG.cakeLeadDays+" day(s) from today.";return}
-    if(!$("#tm").value){$("#err2").textContent="Choose a pickup or delivery time slot.";return}
-    const okMp=/^https?:\/\/\S+$/i.test(mp);
-    if(home&&mp&&!okMp){$("#err2").textContent="Paste the full Google Maps link, or clear it and type your address.";return}
-    if(home&&ad.length<8&&!okMp){$("#err2").textContent="Enter your delivery address or paste a Google Maps location link.";return}
-    const tl=$("#tm").selectedOptions[0].textContent,wt=u.length>1?u.map((n,i)=>`Cake ${i+1} (${n}): ${w[i]||"None"}`):[w[0]||"None"];
-    Object.assign(o,{writing:u.length>1?wt.join(" | "):wt[0],candles:$("#cd").checked?"Yes":"No",topper:$("#tp").checked?"Yes":"No",method:m,
-      address:home?[ad,mp?"Map: "+mp:""].filter(Boolean).join(" | "):"",date:dt.value,time:tl,cakes:L.filter(c=>c.cake).map(c=>`${c.qty} x ${c.name}${c.opt?" ("+c.opt+")":""}`).join("; "),cakeTotal:L.filter(c=>c.cake).reduce((n,c)=>n+c.price*c.qty,0)});
-    t+=`\n\n*Cake details*\n`+(u.length>1?wt.map(x=>"• "+x).join("\n"):`Writing: ${wt[0]}`)+`\nCandles: ${o.candles}${o.candles=="Yes"?" (extra)":""}\nTopper: ${o.topper}${o.topper=="Yes"?" (extra)":""}\n${m}${home?" (extra)":""}`
-      +(home?(ad?`\nAddress: ${ad}`:"")+(mp?`\nMap: ${mp}`:""):"")+`\nDate: ${o.date}  Time: ${tl}\n_Awaiting store confirmation_`;
+    const u=cakeUnits(),w=[...document.querySelectorAll(".wr")].map(i=>i.value.trim()),tl=$("#tm").selectedOptions[0].textContent,wt=u.length>1?u.map((n,i)=>`Cake ${i+1} (${n}): ${w[i]||"None"}`):[w[0]||"None"];
+    Object.assign(o,{writing:u.length>1?wt.join(" | "):wt[0],candles:$("#cd").checked?"Yes":"No",topper:$("#tp").checked?"Yes":"No",date:dt.value,time:tl,
+      cakes:L.filter(c=>c.cake).map(c=>`${c.qty} x ${c.name}${c.opt?" ("+c.opt+")":""}`).join("; "),cakeTotal:L.filter(c=>c.cake).reduce((n,c)=>n+c.price*c.qty,0)});
+    t+=`\n\n*Cake details*\n`+(u.length>1?wt.map(x=>"• "+x).join("\n"):`Writing: ${wt[0]}`)+`\nCandles: ${o.candles}${o.candles=="Yes"?" (extra)":""}\nTopper: ${o.topper}${o.topper=="Yes"?" (extra)":""}\nDate: ${o.date}  Time: ${tl}`;
   }
+  t+=`\n\n*${m}*`;
+  if(home){const nc=L.filter(c=>!c.cake).reduce((n,c)=>n+c.price*c.qty,0);
+    t+=(ad?`\nAddress: ${ad}`:"")+(mp?`\nMap: ${mp}`:"");
+    if(nc>0)t+=nc>=CONFIG.freeDeliveryFrom?"\nDelivery: free for non-cake items":`\nDelivery charge: ${fmt(CONFIG.deliveryFee)} for non-cake items`;
+    if(hasCake)t+="\nCake delivery: charged extra, store to confirm"}
+  if(hasCake)t+="\n_Awaiting store confirmation_";
   if(nt)t+=`\nNotes: ${nt}`;
-  $("#err2").textContent="";
   if(hasCake)post(o);   // only cake orders are saved in the sheet
-  $("#ono").textContent=$("#ono2").textContent="Order no. "+orderNo+" – press Send in WhatsApp to finish";
+  $("#ono").textContent=$("#ono2").textContent=$("#ono3").textContent="Order no. "+orderNo+" – press Send in WhatsApp to finish";
   window.open(`https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(t)}`,"_blank")}
 $("#send").onclick=()=>{
   const ph=$("#ph").value.trim(),hasCake=list().some(c=>c.cake);
   if(!$("#nm").value.trim()||ph.replace(/\D/g,"").length<10){$("#err").textContent="Enter your name and a 10-digit phone number.";return}
   $("#err").textContent="";
-  if(hasCake){buildWriting();buildSlots();$("#p1").hidden=true;$("#p2").hidden=false;$("#err2").textContent="";$("#ono2").textContent=$("#ono").textContent;return}
-  finish(false)};
-$("#send2").onclick=()=>finish(true);
+  if(hasCake){buildWriting();$("#p1").hidden=true;$("#p2").hidden=false;$("#err2").textContent="";$("#ono2").textContent=$("#ono").textContent;return}
+  goP3()};
+$("#send2").onclick=goP3;
+$("#send3").onclick=finish;
 $("#back").onclick=()=>{$("#p2").hidden=true;$("#p1").hidden=false};
+$("#back3").onclick=()=>{$("#p3").hidden=true;(list().some(c=>c.cake)?$("#p2"):$("#p1")).hidden=false};
 </script>
 </body>
 </html>
