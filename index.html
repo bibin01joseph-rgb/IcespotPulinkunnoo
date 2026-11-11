@@ -9,7 +9,12 @@
 <meta property="og:site_name" content="Icespot">
 <meta property="og:title" content="Icespot – Ice cream, shakes & cakes">
 <meta property="og:description" content="Live in Freshness. Order ice cream, shakes and fresh cakes from Icespot, Pulinkunnoo.">
-<!-- og:image and og:url go here once the final site address is known -->
+<meta property="og:url" content="https://icespotpulinkunnoo.netlify.app/">
+<meta property="og:image" content="https://icespotpulinkunnoo.netlify.app/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://icespotpulinkunnoo.netlify.app/og-image.png">
 <meta name="theme-color" content="#F66DA6">
 <title>Icespot – Ice cream, shakes & cakes</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -70,6 +75,7 @@ select#tm{width:100%;font:inherit;margin-top:4px;padding:10px 12px;border:1.5px 
 .rs{font-family:var(--num);font-variant-numeric:lining-nums;font-weight:700}
 .bs{display:inline-block;margin-left:6px;padding:1px 8px;border-radius:99px;background:#FFE08A;color:#6B4200;font-size:.68rem;font-weight:700;letter-spacing:.02em;vertical-align:middle;white-space:nowrap}
 .item.off b{text-decoration:line-through}
+#dsum{margin-top:12px}
 [hidden]{display:none!important}
 .bar{position:fixed;left:0;right:0;bottom:0;padding:12px 18px calc(env(safe-area-inset-bottom,0px) + 14px);display:none;justify-content:center;z-index:6;background:linear-gradient(to top,var(--bg) 55%,transparent)}
 .bar.on{display:flex}
@@ -88,7 +94,7 @@ input,textarea{width:100%;font:inherit;margin-top:4px;padding:10px 12px;border:1
 .go{margin-top:14px;width:100%;font:inherit;font-weight:700;font-size:1rem;background:#1FA855;color:#fff;border:0;border-radius:99px;padding:14px;cursor:pointer}
 .close{float:right;background:none;border:0;font-size:1.6rem;cursor:pointer;color:var(--muted)}
 .flinks{display:flex;justify-content:center;flex-wrap:wrap;gap:10px 20px;margin-bottom:14px}.flinks a{display:inline-flex;align-items:center;gap:6px;color:var(--plum);font-weight:700;text-decoration:none;cursor:pointer}.flinks a:hover{text-decoration:underline}
-footer p{margin-top:8px}footer .small{font-size:.78rem}.info a{color:#fff;text-decoration:underline;text-underline-offset:3px}
+footer p{margin-top:8px}footer .small{font-size:.78rem}.info a{color:#fff;text-decoration:none}
 footer{max-width:680px;margin:36px auto 0;padding:0 22px;color:var(--muted);font-size:.85rem;text-align:center}
 @media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
 </style>
@@ -134,9 +140,8 @@ footer{max-width:680px;margin:36px auto 0;padding:0 22px;color:var(--muted);font
     <h3>Cake details</h3>
     <div class="ono" id="ono2"></div>
     <div id="wbox"></div>
-    <label class="chk"><input type="checkbox" id="cd"> Add candles</label>
-    <label class="chk"><input type="checkbox" id="tp"> Add cake topper</label>
-    <p class="note">Candles and cake toppers are supplied by Icespot and cost extra.</p>
+    <label class="chk"><input type="checkbox" id="cd"> <span id="cdl">Add candles</span></label>
+    <label class="chk"><input type="checkbox" id="tp"> <span id="tpl">Add cake topper</span></label>
     <div class="err" id="err2" role="alert"></div>
     <button class="go" id="send2">Next: pickup or delivery</button>
     <button class="back" id="back">Back</button>
@@ -154,12 +159,13 @@ footer{max-width:680px;margin:36px auto 0;padding:0 22px;color:var(--muted);font
       <label>Or paste a Google Maps location link<input id="mp" type="url" placeholder="https://maps.app.goo.gl/..."></label>
       <p class="note">Open Google Maps, tap your location, choose Share, copy the link and paste it here. It is the easiest way for us to find you.</p>
     </div>
-    <div class="box" id="dnote3" hidden></div>
+    <p class="note" id="pnote" hidden></p>
+    <div id="dsum" hidden></div>
     <div id="cdt" hidden>
       <div class="row2"><label>Date<input id="dt" type="date"></label><label>Time<select id="tm"><option value="">Select time</option></select></label></div>
-      <p class="note" id="slotnote"></p>
-      <div class="box">Candles, cake topper and home delivery cost extra, and free delivery does not apply to cakes. We will confirm whether we can deliver to your area.<br>Please call the store to confirm your order: <a id="tel"></a></div>
+      
     </div>
+    <div class="box" id="gnote" hidden></div>
     <div class="err" id="err3" role="alert"></div>
     <button class="go" id="send3">Send order on WhatsApp</button>
     <button class="back" id="back3">Back</button>
@@ -179,9 +185,10 @@ const CONFIG={
   mapsUrl:"https://maps.app.goo.gl/8K4vfCC6J5fpY3Qn6",
   fssai:"",                         // your FSSAI licence number; shown in the footer when filled
   storePhone:"+919497657704",        // shown in the "call the store" note
-  slotFrom:"11:30", slotTo:"22:30", slotMinutes:30, sundayFrom:"16:00", slotNote:"Store opens at 11 AM. Collection from 11:30 AM (Sundays from 4 PM).",   // delivery/pickup time slots
+  slotFrom:"11:30", slotTo:"22:30", slotMinutes:30, sundayFrom:"16:00", pickupNote:"Collect from the store from 11:30 AM (Sundays from 4 PM).",   // delivery/pickup time slots
   ordersUrl:"https://script.google.com/macros/s/AKfycbyNPZEH-0hKavsptQhFDQKZijoqlyjHtyizuQ9gdnWGR_-_VOJVznCboHbLtoaGoy-0/exec",                     // Apps Script web app link: saves orders in a private Google Sheet
   sheetCsvUrl:"https://docs.google.com/spreadsheets/d/e/2PACX-1vQ_u070DFZRS-jW4MfCMxCl_MM6ApENWJ2wT7Cn8dnBUEJVQGlzOBykou6lJyA-VahtkOPJgkjhPy02/pub?gid=947170811&single=true&output=csv",                   // paste your Google Sheet "published CSV" link here
+  candlePrice:"", topperPrice:"",   // optional: fill in a price (for example 30) to show it next to the tick boxes
   deliveryFee:20, freeDeliveryFrom:150,   // delivery charge below this order value; free from it
   sizeLabelsByGroup:{"Family Packs":["1 Ltr","½ Ltr"]},   // size names for groups that are not cakes
   sizeLabels:["Half kg","1 kg"]     // names for Price and Price2 columns of cakes
@@ -304,7 +311,6 @@ function newOrderNo(){const a=new Uint32Array(2);
   const c=CONFIG.orderCities;return `${c[a[0]%c.length]}-${10+a[1]%90}`}
 $("#open").onclick=()=>{drawLines();$("#err").textContent="";orderNo=newOrderNo();$("#ono").textContent="Order no. "+orderNo;
   $("#p1").hidden=false;$("#p2").hidden=true;$("#p3").hidden=true;$("#dlg").showModal()};
-$("#tel").textContent=CONFIG.storePhone;$("#tel").href="tel:"+CONFIG.storePhone.replace(/\s/g,"");
 document.querySelectorAll('[name="dm"]').forEach(r=>r.onchange=()=>{$("#adl").hidden=document.querySelector('[name="dm"]:checked').value!=="Home delivery"});
 $("#x").onclick=()=>$("#dlg").close();
 const cakeUnits=()=>{const u=[];list().filter(c=>c.cake).forEach(c=>{for(let i=0;i<c.qty;i++)u.push(c.name+(c.opt?" ("+c.opt+")":""))});return u};
@@ -321,14 +327,23 @@ dt.addEventListener("change",buildSlots);
 function post(o){if(!CONFIG.ordersUrl)return;
   try{fetch(CONFIG.ordersUrl,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain"},body:JSON.stringify(o),keepalive:true})}catch(e){}}
 const deliveryOn=()=>document.querySelector('[name="dm"]:checked').value==="Home delivery";
-function delivParts(){const L=list(),hasCake=L.some(c=>c.cake),nc=L.filter(c=>!c.cake).reduce((n,c)=>n+c.price*c.qty,0),p=[],w=hasCake?"your other items":"this order";
-  if(nc>0)p.push(nc>=CONFIG.freeDeliveryFrom?`Home delivery is free for ${w} (${fmt(CONFIG.freeDeliveryFrom)} and above).`:`Home delivery for ${w}: ${fmt(CONFIG.deliveryFee)} charge below ${fmt(CONFIG.freeDeliveryFrom)}. Add ${fmt(CONFIG.freeDeliveryFrom-nc)} more for free delivery.`);
-  if(hasCake)p.push("Free delivery does not apply to cakes. Cake delivery is charged extra and confirmed by the store.");
-  return p}
+function delivInfo(){const L=list(),nc=L.filter(c=>!c.cake).reduce((n,c)=>n+c.price*c.qty,0);return {hasCake:L.some(c=>c.cake),nc,free:nc>=CONFIG.freeDeliveryFrom,short:CONFIG.freeDeliveryFrom-nc}}
+function delivParts(){const d=delivInfo(),w=d.hasCake?"your other items":"this order",p=[];
+  if(d.nc>0)p.push(d.free?`Home delivery is free for ${w}.`:`Home delivery ${fmt(CONFIG.deliveryFee)} for ${w}. Add ${fmt(d.short)} more for free delivery.`);
+  if(d.hasCake)p.push("Cake delivery is extra.");
+  return p.length?[p.join(" ")]:[]}
 const rsHtml=a=>a.join("<br>").replace(/\u20B9[\d,]+/g,m=>`<span class="rs">${m}</span>`);
-function syncMethod(){const home=deliveryOn();$("#adl").hidden=!home;$("#dnote3").innerHTML=rsHtml(delivParts());$("#dnote3").hidden=!home}
+function syncMethod(){const home=deliveryOn(),d=delivInfo(),rows=[];
+  $("#adl").hidden=!home;$("#pnote").hidden=home;$("#pnote").textContent=CONFIG.pickupNote;
+  if(d.nc>0)rows.push([d.hasCake?"Delivery, other items":"Delivery",d.free?"Free":fmt(CONFIG.deliveryFee)]);
+  if(d.hasCake)rows.push(["Cake delivery","Extra"]);
+  $("#dsum").innerHTML=rows.map(r=>`<div class="line"><span>${r[0]}</span><span>${r[1]}</span></div>`).join("");$("#dsum").hidden=!home||!rows.length;
+  const tel=`<a href="tel:${CONFIG.storePhone.replace(/\s/g,"")}">${CONFIG.storePhone}</a>`;
+  $("#gnote").innerHTML=d.hasCake?`We will confirm your cake order${home?" and whether we can deliver to your area":""}. Questions? Call ${tel}.`:home?"We will confirm that we can deliver to your area.":"";
+  $("#gnote").hidden=!$("#gnote").innerHTML}
 document.querySelectorAll('[name="dm"]').forEach(r=>r.onchange=syncMethod);
-$("#slotnote").textContent=CONFIG.slotNote;
+$("#cdl").textContent="Add candles"+(CONFIG.candlePrice?` (+${fmt(CONFIG.candlePrice)})`:" (extra cost)");
+$("#tpl").textContent="Add cake topper"+(CONFIG.topperPrice?` (+${fmt(CONFIG.topperPrice)})`:" (extra cost)");
 function goP3(){const hasCake=list().some(c=>c.cake);buildSlots();$("#cdt").hidden=!hasCake;$("#ono3").textContent=$("#ono").textContent;$("#err3").textContent="";syncMethod();
   $("#p1").hidden=true;$("#p2").hidden=true;$("#p3").hidden=false}
 function finish(){
@@ -354,7 +369,7 @@ function finish(){
   if(hasCake)t+="\n_Awaiting store confirmation_";
   if(nt)t+=`\nNotes: ${nt}`;
   if(hasCake)post(o);   // only cake orders are saved in the sheet
-  $("#ono").textContent=$("#ono2").textContent=$("#ono3").textContent="Order no. "+orderNo+" – press Send in WhatsApp to finish";
+  $("#ono").textContent=$("#ono2").textContent=$("#ono3").textContent="Order no. "+orderNo+" – tap Send in WhatsApp. Not confirmed until the store replies.";
   window.open(`https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(t)}`,"_blank")}
 $("#send").onclick=()=>{
   const ph=$("#ph").value.trim(),hasCake=list().some(c=>c.cake);
