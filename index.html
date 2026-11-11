@@ -3,7 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<link rel="icon" href="logo.png">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23F66DA6'/%3E%3Ctext x='50' y='72' font-size='64' text-anchor='middle'%3E🍦%3C/text%3E%3C/svg%3E">
+<meta name="description" content="Order ice cream, shakes and fresh cakes from Icespot, Pulinkunnoo. Choose your items and send your order on WhatsApp.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Icespot">
+<meta property="og:title" content="Icespot – Ice cream, shakes & cakes">
+<meta property="og:description" content="Live in Freshness. Order ice cream, shakes and fresh cakes from Icespot, Pulinkunnoo.">
+<!-- og:image and og:url go here once the final site address is known -->
 <meta name="theme-color" content="#F66DA6">
 <title>Icespot – Ice cream, shakes & cakes</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -81,6 +87,8 @@ input,textarea{width:100%;font:inherit;margin-top:4px;padding:10px 12px;border:1
 .err{color:#b00020;font-size:.9rem;margin-top:8px;min-height:1.2em}
 .go{margin-top:14px;width:100%;font:inherit;font-weight:700;font-size:1rem;background:#1FA855;color:#fff;border:0;border-radius:99px;padding:14px;cursor:pointer}
 .close{float:right;background:none;border:0;font-size:1.6rem;cursor:pointer;color:var(--muted)}
+.flinks{display:flex;justify-content:center;flex-wrap:wrap;gap:10px 20px;margin-bottom:14px}.flinks a{display:inline-flex;align-items:center;gap:6px;color:var(--plum);font-weight:700;text-decoration:none;cursor:pointer}.flinks a:hover{text-decoration:underline}
+footer p{margin-top:8px}footer .small{font-size:.78rem}.info a{color:#fff;text-decoration:underline;text-underline-offset:3px}
 footer{max-width:680px;margin:36px auto 0;padding:0 22px;color:var(--muted);font-size:.85rem;text-align:center}
 @media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
 </style>
@@ -93,7 +101,16 @@ footer{max-width:680px;margin:36px auto 0;padding:0 22px;color:var(--muted);font
 </header>
 <nav><div id="tabs"></div></nav>
 <main id="menu"><p class="sub" style="padding-top:30px">Loading menu…</p></main>
-<footer>Cake preorders need at least <span id="lead"></span> day(s) notice. </footer>
+<footer>
+  <div class="flinks">
+    <a id="fig" target="_blank" rel="noopener"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>Instagram</a>
+    <a id="fmap" target="_blank" rel="noopener"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>Find us on Google Maps</a>
+    <a id="ftel"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg>Call the store</a>
+  </div>
+  <p>Cake preorders need at least <span id="lead"></span> day(s) notice. Candles, cake toppers and home delivery cost extra. Home delivery depends on your area and is confirmed by the store.</p>
+  <p id="fssai" hidden></p>
+  <p class="small">© Icespot, Pulinkunnoo</p>
+</footer>
 
 <div class="bar" id="bar"><button id="open"><span id="cnt"></span><span id="sum"></span></button></div>
 
@@ -158,6 +175,9 @@ const CONFIG={
   cakeLeadDays:1,                   // minimum notice for cakes
   currency:"\u20B9",
   orderCities:["Oxford","Dublin","Sharjah","Dubai","Doha","Muscat","Manama","London","Paris","Rome","Tokyo","Sydney","Toronto","Singapore","Berlin","Zurich","Oslo","Lisbon","Vienna","Seoul","Cairo","Nairobi","Auckland"], // order numbers look like Dublin-47
+  instagram:"https://www.instagram.com/icespot_pulinkunnoo/",
+  mapsUrl:"https://maps.app.goo.gl/8K4vfCC6J5fpY3Qn6",
+  fssai:"",                         // your FSSAI licence number; shown in the footer when filled
   storePhone:"+919497657704",        // shown in the "call the store" note
   slotFrom:"11:30", slotTo:"22:30", slotMinutes:30, sundayFrom:"16:00", slotNote:"Store opens at 11 AM. Collection from 11:30 AM (Sundays from 4 PM).",   // delivery/pickup time slots
   ordersUrl:"https://script.google.com/macros/s/AKfycbyNPZEH-0hKavsptQhFDQKZijoqlyjHtyizuQ9gdnWGR_-_VOJVznCboHbLtoaGoy-0/exec",                     // Apps Script web app link: saves orders in a private Google Sheet
@@ -173,7 +193,9 @@ const DEFAULT_CSV="Section,Group,Item,Price,Price2,Photo,Available,Best seller\n
 const $=s=>document.querySelector(s), cur=CONFIG.currency;
 let MENU=[];const cart={};
 const fmt=n=>cur+n.toLocaleString("en-IN");
-$("#shop").textContent=CONFIG.shop;$("#place").textContent=CONFIG.place;
+$("#shop").textContent=CONFIG.shop;$("#place").innerHTML=`<a href="${CONFIG.mapsUrl}" target="_blank" rel="noopener">📍 ${CONFIG.place}</a>`;
+$("#fig").href=CONFIG.instagram;$("#fmap").href=CONFIG.mapsUrl;$("#ftel").href="tel:"+CONFIG.storePhone.replace(/\s/g,"");
+if(CONFIG.fssai){$("#fssai").textContent="FSSAI Lic. No. "+CONFIG.fssai;$("#fssai").hidden=false}
 $("#lead").textContent=CONFIG.cakeLeadDays;document.title=CONFIG.shop+" – Order online";
 
 const LOOK={"milk candy":["🍦","#FFF3C9"],"water candy":["🧊","#D4EEF7"],"family packs":["🍨","#DDF3E4"],"cones":["🍦","#FFE3C2"],"lime":["🍋","#F4F8C4"],"mojitos":["🍹","#D8F0D0"],
