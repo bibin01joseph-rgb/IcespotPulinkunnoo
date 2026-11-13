@@ -76,6 +76,12 @@ select#tm{width:100%;font:inherit;margin-top:4px;padding:10px 12px;border:1.5px 
 .bs{display:inline-block;margin-left:6px;padding:1px 8px;border-radius:99px;background:#FFE08A;color:#6B4200;font-size:.68rem;font-weight:700;letter-spacing:.02em;vertical-align:middle;white-space:nowrap}
 .item.off b{text-decoration:line-through}
 #dsum{margin-top:12px}
+.searchbar{max-width:680px;margin:16px auto 6px;padding:0 22px}
+.searchbar input{width:100%;margin:0;font:inherit;padding:12px 16px 12px 44px;border:2px solid var(--line);border-radius:99px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23822A84' stroke-width='2.2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='M20 20l-3.5-3.5'/%3E%3C/svg%3E") no-repeat 16px center}
+.searchbar input:focus{border-color:var(--plum);outline:none}
+.where{display:none;color:var(--muted);font-size:.78rem}
+body.searching .where{display:block}body.searching .subs,body.searching .subhead{display:none}
+.item.nomatch{display:none}
 [hidden]{display:none!important}
 .bar{position:fixed;left:0;right:0;bottom:0;padding:12px 18px calc(env(safe-area-inset-bottom,0px) + 14px);display:none;justify-content:center;z-index:6;background:linear-gradient(to top,var(--bg) 55%,transparent)}
 .bar.on{display:flex}
@@ -105,7 +111,9 @@ footer{max-width:680px;margin:36px auto 0;padding:0 22px;color:var(--muted);font
   <img class="logo" src="logo.png" alt="Icespot – Live in Freshness" width="616" height="304">
   <div class="info"><span id="place"></span></div>
 </header>
+<div class="searchbar"><input id="q" type="search" placeholder="Search ice cream, shakes, cakes…" aria-label="Search the menu" autocomplete="off"></div>
 <nav><div id="tabs"></div></nav>
+<p class="sub" id="noresults" hidden style="text-align:center;padding:28px 22px 0"></p>
 <main id="menu"><p class="sub" style="padding-top:30px">Loading menu…</p></main>
 <footer>
   <div class="flinks">
@@ -246,6 +254,16 @@ function toMenu(csv){NODEL.clear();const rows=parseCSV(csv).filter(r=>r.some(x=>
     g.items.sort((a,b)=>order.indexOf(a.sub)-order.indexOf(b.sub))}));
   return menu}
 
+const esc=x=>String(x).replace(/"/g,"&quot;");
+function applySearch(){const raw=$("#q").value.trim().toLowerCase(),words=raw.split(/\s+/).filter(Boolean);let total=0;
+  document.body.classList.toggle("searching",words.length>0);
+  MENU.forEach((m,mi)=>{const sec=$("#s"+mi);if(!sec)return;let any=0;
+    m.groups.forEach((g,gi)=>{const box=sec.querySelector(`[data-grp="${mi}-${gi}"]`),pb=sec.querySelector(`[data-sub="${mi}-${gi}"]`);
+      box.hidden=words.length?false:(pb?pb.getAttribute("aria-pressed")!=="true":false);
+      box.querySelectorAll(".item").forEach(it=>{const hit=words.every(w=>it.dataset.q.includes(w));it.classList.toggle("nomatch",!hit);if(hit)any++})});
+    sec.hidden=words.length>0&&any===0;total+=any});
+  const nr=$("#noresults");nr.hidden=!(words.length&&total===0);nr.textContent=words.length&&total===0?"No items found for “"+$("#q").value.trim()+"”. Try another word.":""}
+$("#q").addEventListener("input",applySearch);
 const getItem=id=>{const [mi,gi,ii]=id.split("-").map(Number);return {m:MENU[mi],g:MENU[mi].groups[gi],it:MENU[mi].groups[gi].items[ii]}};
 function render(){
   $("#tabs").innerHTML=MENU.map((m,i)=>`<a href="#s${i}">${m.title}</a>`).join("");
@@ -257,7 +275,7 @@ function render(){
       return `<div data-grp="${mi}-${gi}"${gi?" hidden":""}>`+pills+g.items.map((it,ii)=>{const id=`${mi}-${gi}-${ii}`;const head=!CONFIG.subTabs&&it.sub&&it.sub!==(g.items[ii-1]||{}).sub?`<h3 class="subhead">${it.sub}</h3>`:"";const hide=CONFIG.subTabs&&sl.length>1&&it.sub!==sl[0]?" hidden":"";
         const sel=it.opts.length>1?`<select aria-label="Size for ${it.n}" data-sel="${id}">${it.opts.map((o,k)=>`<option value="${k}">${o[0]}</option>`).join("")}</select>`:"";
         const pic=it.img?`<img src="${it.img}" alt="${it.n}" loading="lazy" onerror="this.replaceWith('${e}')">`:e;
-        return head+`<div class="item${it.ok?"":" off"}" data-s="${it.sub}"${hide}><div class="pic" style="--sw:${c}">${pic}</div><div class="txt"><b>${it.n}${it.best?` <span class="bs">★ Best seller</span>`:""}</b></div>
+        return head+`<div class="item${it.ok?"":" off"}" data-s="${it.sub}" data-q="${esc((it.n+" "+g.t+" "+(it.sub||"")+" "+m.title+(it.best?" best seller":"")).toLowerCase())}"${hide}><div class="pic" style="--sw:${c}">${pic}</div><div class="txt"><b>${it.n}${it.best?` <span class="bs">★ Best seller</span>`:""}</b><small class="where">${m.title} · ${g.t}${it.sub?" · "+it.sub:""}</small></div>
         <div class="buy">${sel}<span class="price" data-pr="${id}">${fmt(it.opts[0][1])}</span><span data-act="${id}"></span></div></div>`}).join("")+`</div>`}).join("");
     return `<section id="s${mi}"><h2>${m.title}</h2>${subs}${groups}</section>`}).join("");
   document.querySelectorAll("[data-sub]").forEach(b=>b.onclick=()=>{
@@ -289,7 +307,7 @@ async function load(){let csv=null;
       try{localStorage.setItem("menu_csv",csv)}catch(e){}}
     catch(e){try{csv=localStorage.getItem("menu_csv")}catch(e2){}}}
   if(!csv)csv=DEFAULT_CSV;
-  MENU=toMenu(csv);render()}
+  MENU=toMenu(csv);render();applySearch()}
 load();
 
 const list=()=>Object.values(cart), total=()=>list().reduce((s,c)=>s+c.price*c.qty,0);
